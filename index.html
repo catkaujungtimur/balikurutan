@@ -5,75 +5,142 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Balik Urutan KA - catkaujungtimur</title>
     <style>
-        body { font-family: sans-serif; background: #222; color: #fff; padding: 20px; text-align: center; }
-        .container { background: #333; padding: 20px; border-radius: 8px; display: inline-block; min-width: 500px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; background: #fff; color: #000; }
-        th, td { border: 1px solid #999; padding: 8px; }
-        th { background: #002d5e; color: #fff; }
-        input { width: 90%; border: none; text-align: center; }
-        .btn { padding: 10px 20px; margin: 10px; cursor: pointer; border: none; border-radius: 4px; font-weight: bold; }
-        .btn-reverse { background: #f39c12; color: #000; }
-        .btn-add { background: #27ae60; color: #fff; }
+        :root { --primary: #002d5e; --secondary: #f39c12; --success: #27ae60; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; margin: 0; padding: 20px; }
+        .header { text-align: center; color: var(--primary); margin-bottom: 20px; }
+        .main-container { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
+        .panel { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 450px; }
+        h3 { margin-top: 0; border-bottom: 2px solid #eee; padding-bottom: 10px; display: flex; justify-content: space-between; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; font-size: 13px; }
+        th { background: #f8f9fa; }
+        input { width: 100%; border: none; outline: none; background: transparent; font-family: inherit; font-size: 13px; }
+        .tonase-row { background: #fff3cd; font-weight: bold; color: #856404; }
+        .btn { padding: 8px 15px; cursor: pointer; border: none; border-radius: 4px; font-weight: bold; font-size: 12px; }
+        .btn-copy { background: var(--primary); color: white; }
+        .btn-reverse { background: var(--secondary); color: white; width: 100%; margin-top: 10px; font-size: 16px; height: 50px; }
+        .info { font-size: 11px; color: #666; margin-bottom: 10px; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h2>Program Balik Urutan KA</h2>
-    <div id="controls">
-        <button class="btn btn-add" onclick="addRow()">+ Tambah Baris</button>
-        <button class="btn btn-reverse" onclick="reverseOrder()">🔄 BALIK URUTAN</button>
-        <button class="btn" style="background:#e74c3c; color:white;" onclick="location.reload()">RESET</button>
+<div class="header">
+    <h2>Program Balik Urutan Rangkaian</h2>
+    <p>Copy data dari Spreadsheet, lalu Paste di kolom kiri.</p>
+</div>
+
+<div class="main-container">
+    <div class="panel">
+        <h3>DATA ASLI <button class="btn btn-copy" onclick="pasteFromClipboard()">Paste dari Excel</button></h3>
+        <div class="info">*Klik kolom pertama lalu tekan Ctrl+V</div>
+        <table>
+            <thead>
+                <tr>
+                    <th width="50%">No Sarana</th>
+                    <th width="20%">Status</th>
+                    <th width="30%">Berat</th>
+                </tr>
+            </thead>
+            <tbody id="inputBody">
+                </tbody>
+        </table>
     </div>
 
-    <table>
-        <thead>
-            <tr>
-                <th>No</th>
-                <th>Identitas Kereta / Sarana</th>
-                <th>Status</th>
-                <th>Berat/Tonase</th>
-            </tr>
-        </thead>
-        <tbody id="trainBody">
-            </tbody>
-    </table>
+    <div class="panel">
+        <h3>HASIL BALIK <button class="btn btn-copy" style="background:var(--success)" onclick="copyResult()">Copy Hasil</button></h3>
+        <div class="info">*Otomatis membalik urutan kecuali baris TONASE</div>
+        <table>
+            <thead>
+                <tr>
+                    <th width="50%">No Sarana</th>
+                    <th width="20%">Status</th>
+                    <th width="30%">Berat</th>
+                </tr>
+            </thead>
+            <tbody id="outputBody"></tbody>
+        </table>
+    </div>
+</div>
+
+<div style="text-align: center; margin-top: 20px;">
+    <button class="btn btn-reverse" style="max-width: 920px;" onclick="processReverse()">🔄 PROSES BALIK URUTAN</button>
 </div>
 
 <script>
-    function addRow(id = "", status = "E", ton = "") {
-        const tbody = document.getElementById("trainBody");
-        const rowCount = tbody.rows.length + 1;
-        const row = tbody.insertRow();
-        row.innerHTML = `
-            <td>${rowCount}</td>
-            <td><input type="text" class="train-id" value="${id}" placeholder="K3 09313"></td>
-            <td><input type="text" class="status" value="${status}"></td>
-            <td><input type="number" class="tonase" value="${ton}"></td>
-        `;
+    // Membuat 15 baris kosong di awal
+    function createEmptyRows(targetId) {
+        const body = document.getElementById(targetId);
+        body.innerHTML = "";
+        for (let i = 0; i < 15; i++) {
+            const row = body.insertRow();
+            row.innerHTML = `<td><input type="text" class="id"></td><td><input type="text" class="st"></td><td><input type="text" class="br"></td>`;
+        }
     }
 
-    function reverseOrder() {
-        const tbody = document.getElementById("trainBody");
-        const rows = Array.from(tbody.rows);
+    // Fungsi menangkap Paste dari Excel/Spreadsheet
+    document.addEventListener('paste', function(e) {
+        const pasteData = (e.clipboardData || window.clipboardData).getData('text');
+        const rows = pasteData.split('\n');
+        const tbody = document.getElementById('inputBody');
         
-        // Ambil data dari baris yang ada
-        const data = rows.map(row => ({
-            id: row.querySelector(".train-id").value,
-            status: row.querySelector(".status").value,
-            ton: row.querySelector(".tonase").value
-        }));
+        if (rows.length > 1) {
+            e.preventDefault();
+            tbody.innerHTML = "";
+            rows.forEach(line => {
+                if (line.trim() === "") return;
+                const cols = line.split('\t'); // Split berdasarkan Tab (Excel)
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td><input type="text" class="id" value="${cols[0] || ''}"></td>
+                    <td><input type="text" class="st" value="${cols[1] || ''}"></td>
+                    <td><input type="text" class="br" value="${cols[2] || ''}"></td>
+                `;
+            });
+        }
+    });
 
-        // Balik Urutannya
+    function processReverse() {
+        const inputRows = Array.from(document.querySelectorAll("#inputBody tr"));
+        let data = inputRows.map(row => ({
+            id: row.querySelector(".id").value,
+            st: row.querySelector(".st").value,
+            br: row.querySelector(".br").value
+        })).filter(item => item.id.trim() !== "");
+
+        if (data.length === 0) return alert("Data kosong!");
+
+        // Pisahkan Tonase agar tetap di bawah
+        const tonaseIndex = data.findIndex(item => item.id.toUpperCase().includes("TONASE"));
+        let tonaseRow = null;
+        if (tonaseIndex !== -1) {
+            tonaseRow = data.splice(tonaseIndex, 1)[0];
+        }
+
+        // Balik Sisa Datanya
         data.reverse();
 
-        // Masukkan kembali ke tabel
-        tbody.innerHTML = "";
-        data.forEach(item => addRow(item.id, item.status, item.ton));
+        // Gabungkan kembali
+        if (tonaseRow) data.push(tonaseRow);
+
+        // Render ke Tabel Kanan
+        const outputBody = document.getElementById("outputBody");
+        outputBody.innerHTML = "";
+        data.forEach(item => {
+            const isTonase = item.id.toUpperCase().includes("TONASE");
+            const row = outputBody.insertRow();
+            if (isTonase) row.className = "tonase-row";
+            row.innerHTML = `<td>${item.id}</td><td>${item.st}</td><td>${item.br}</td>`;
+        });
     }
 
-    // Munculkan 10 baris kosong pertama
-    for(let i=0; i<10; i++) addRow();
+    function copyResult() {
+        const rows = Array.from(document.querySelectorAll("#outputBody tr"));
+        const text = rows.map(row => Array.from(row.cells).map(c => c.innerText).join('\t')).join('\n');
+        navigator.clipboard.writeText(text).then(() => alert("Hasil berhasil di-copy!"));
+    }
+
+    createEmptyRows("inputBody");
 </script>
+
 </body>
 </html>
