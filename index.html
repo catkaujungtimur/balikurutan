@@ -3,41 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Balik Urutan KA - catkaujungtimur</title>
+    <title>Balik Urutan KA Otomatis - catkaujungtimur</title>
     <style>
-        :root { --primary: #002d5e; --secondary: #f39c12; --success: #27ae60; }
-        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; padding: 20px; }
+        :root { --primary: #002d5e; --secondary: #f39c12; --success: #27ae60; --danger: #e74c3c; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; padding: 20px; margin: 0; }
         .header { text-align: center; color: var(--primary); margin-bottom: 20px; }
-        .main-container { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
-        .panel { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 580px; }
-        h3 { margin-top: 0; border-bottom: 2px solid #eee; padding-bottom: 10px; display: flex; justify-content: space-between; }
-        table { width: 100%; border-collapse: collapse; margin-bottom: 10px; table-layout: fixed; }
-        th, td { border: 1px solid #ccc; padding: 6px; text-align: left; font-size: 12px; overflow: hidden; }
-        th { background: #f8f9fa; text-align: center; }
-        input { width: 100%; border: none; outline: none; background: transparent; font-family: inherit; font-size: 12px; box-sizing: border-box; }
+        .main-container { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
+        .panel { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 620px; }
+        h3 { margin-top: 0; border-bottom: 2px solid #eee; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+        th, td { border: 1px solid #ccc; padding: 4px; text-align: center; font-size: 12px; }
+        th { background: #f8f9fa; }
+        input { width: 100%; border: none; outline: none; background: transparent; font-family: inherit; font-size: 12px; text-align: center; }
+        .btn-ctrl { width: 24px; height: 24px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; color: white; font-size: 14px; line-height: 1; }
+        .btn-add { background: var(--success); margin-right: 2px; }
+        .btn-rem { background: var(--danger); }
         .tonase-row { background: #fff3cd !important; font-weight: bold; }
-        .btn { padding: 8px 15px; cursor: pointer; border: none; border-radius: 4px; font-weight: bold; font-size: 12px; }
-        .btn-reverse { background: var(--secondary); color: white; width: 100%; margin-top: 10px; font-size: 16px; height: 50px; cursor: pointer; }
-        .info { font-size: 11px; color: #666; margin-bottom: 10px; font-style: italic; }
+        .btn-top { padding: 8px 15px; cursor: pointer; border: none; border-radius: 4px; font-weight: bold; font-size: 12px; }
+        .info { font-size: 11px; color: #d35400; margin-bottom: 10px; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div class="header">
-    <h2>Program Balik Urutan Rangkaian</h2>
+    <h2>Program Balik Urutan & Manajemen Langsir</h2>
 </div>
 
 <div class="main-container">
     <div class="panel">
-        <h3>DATA ASLI <button class="btn" style="background:#6c757d; color:white" onclick="location.reload()">Reset</button></h3>
-        <p class="info">*Klik di area tabel kiri, lalu Paste (Ctrl+V) dari Spreadsheet</p>
+        <h3>DATA ASLI <button class="btn-top" style="background:#6c757d; color:white" onclick="location.reload()">Reset</button></h3>
+        <p class="info">Paste (Ctrl+V) di sini. Hasil akan terupdate otomatis.</p>
         <table>
             <thead>
                 <tr>
+                    <th width="45px">Aksi</th>
                     <th width="35%">No Sarana</th>
-                    <th width="10%">ST</th>
-                    <th width="15%">Berat</th>
-                    <th width="40%">Catatan/Order</th>
+                    <th width="40px">ST</th>
+                    <th width="60px">Berat</th>
+                    <th>Catatan/Order</th>
                 </tr>
             </thead>
             <tbody id="inputBody"></tbody>
@@ -45,15 +48,16 @@
     </div>
 
     <div class="panel">
-        <h3>HASIL BALIK <button class="btn" style="background:var(--success); color:white" onclick="copyResult()">Copy Hasil</button></h3>
-        <p class="info">*Edit manual di sini berdasarkan catatan sebelum di-Copy</p>
+        <h3>HASIL BALIK <button class="btn-top" style="background:var(--success); color:white" onclick="copyResult()">Copy Hasil</button></h3>
+        <p class="info">Anda bebas menambah/menghapus baris di sini juga.</p>
         <table>
             <thead>
                 <tr>
+                    <th width="45px">Aksi</th>
                     <th width="35%">No Sarana</th>
-                    <th width="10%">ST</th>
-                    <th width="15%">Berat</th>
-                    <th width="40%">Catatan/Order</th>
+                    <th width="40px">ST</th>
+                    <th width="60px">Berat</th>
+                    <th>Catatan/Order</th>
                 </tr>
             </thead>
             <tbody id="outputBody"></tbody>
@@ -61,57 +65,63 @@
     </div>
 </div>
 
-<div style="text-align: center; margin-top: 20px;">
-    <button class="btn btn-reverse" style="max-width: 1180px;" onclick="processReverse()">🔄 BALIK URUTAN SEKARANG</button>
-</div>
-
 <script>
-    // Inisialisasi baris kosong
-    function createRows(targetId, count) {
-        const body = document.getElementById(targetId);
-        body.innerHTML = "";
-        for (let i = 0; i < count; i++) {
-            const row = body.insertRow();
-            row.innerHTML = `
-                <td><input type="text" class="id"></td>
-                <td><input type="text" class="st"></td>
-                <td><input type="text" class="br"></td>
-                <td><input type="text" class="ct"></td>
-            `;
-        }
+    // Inisialisasi awal
+    function init() {
+        for(let i=0; i<10; i++) addRow('inputBody');
     }
 
-    // Logika PASTE pintar (menyebar ke semua kolom)
+    function addRow(targetId, d=["","","",""], referenceRow = null) {
+        const tbody = document.getElementById(targetId);
+        const row = document.createElement("tr");
+        row.innerHTML = `
+            <td>
+                <button class="btn-ctrl btn-add" onclick="insertNewRow(this, '${targetId}')">+</button>
+                <button class="btn-ctrl btn-rem" onclick="removeRow(this, '${targetId}')">-</button>
+            </td>
+            <td><input type="text" class="id" value="${d[0]}" oninput="autoProcess()"></td>
+            <td><input type="text" class="st" value="${d[1]}" oninput="autoProcess()"></td>
+            <td><input type="text" class="br" value="${d[2]}" oninput="autoProcess()"></td>
+            <td><input type="text" class="ct" value="${d[3]}" oninput="autoProcess()"></td>
+        `;
+        
+        if (referenceRow) {
+            referenceRow.parentNode.insertBefore(row, referenceRow.nextSibling);
+        } else {
+            tbody.appendChild(row);
+        }
+        if (targetId === 'inputBody') autoProcess();
+    }
+
+    function insertNewRow(btn, targetId) {
+        const currentRow = btn.closest("tr");
+        addRow(targetId, ["","","",""], currentRow);
+    }
+
+    function removeRow(btn, targetId) {
+        const row = btn.closest("tr");
+        row.remove();
+        if (targetId === 'inputBody') autoProcess();
+    }
+
+    // Capture Paste
     document.addEventListener('paste', function(e) {
-        // Abaikan jika user sedang fokus mengetik di dalam input tertentu
-        // Tapi izinkan jika area input masih kosong untuk memudahkan paste masal
+        if (e.target.tagName === 'INPUT') return;
         const pasteData = (e.clipboardData || window.clipboardData).getData('text');
         const rows = pasteData.trim().split(/\r?\n/);
         const tbody = document.getElementById('inputBody');
         
         if (rows.length > 0) {
             e.preventDefault();
-            tbody.innerHTML = ""; // Bersihkan baris kosong
-            
+            tbody.innerHTML = "";
             rows.forEach(line => {
-                const cols = line.split('\t'); // Memecah berdasarkan TAB Excel
-                const row = tbody.insertRow();
-                row.innerHTML = `
-                    <td><input type="text" class="id" value="${cols[0] || ''}"></td>
-                    <td><input type="text" class="st" value="${cols[1] || ''}"></td>
-                    <td><input type="text" class="br" value="${cols[2] || ''}"></td>
-                    <td><input type="text" class="ct" value="${cols[3] || ''}"></td>
-                `;
+                const cols = line.split('\t');
+                addRow('inputBody', [cols[0]||'', cols[1]||'', cols[2]||'', cols[3]||'']);
             });
-            // Tambahkan beberapa baris kosong di bawahnya
-            for(let i=0; i<5; i++) {
-                const row = tbody.insertRow();
-                row.innerHTML = '<td><input type="text" class="id"></td><td><input type="text" class="st"></td><td><input type="text" class="br"></td><td><input type="text" class="ct"></td>';
-            }
         }
     });
 
-    function processReverse() {
+    function autoProcess() {
         const inputRows = Array.from(document.querySelectorAll("#inputBody tr"));
         let data = inputRows.map(row => ({
             id: row.querySelector(".id").value,
@@ -122,55 +132,53 @@
 
         if (data.length === 0) return;
 
-        // Cari baris Tonase (agar tetap di posisi paling bawah)
-        const tonaseIndex = data.findIndex(item => item.id.toUpperCase().includes("TONASE"));
-        let tonaseRow = null;
-        if (tonaseIndex !== -1) {
-            tonaseRow = data.splice(tonaseIndex, 1)[0];
-        }
+        // Tonase lock logic
+        const tIndex = data.findIndex(item => item.id.toUpperCase().includes("TONASE"));
+        let tRow = null;
+        if (tIndex !== -1) tRow = data.splice(tIndex, 1)[0];
 
-        // Proses Balik Urutan
         data.reverse();
+        if (tRow) data.push(tRow);
 
-        // Gabungkan kembali dengan Tonase di bawah
-        if (tonaseRow) data.push(tonaseRow);
+        renderOutput(data);
+    }
 
-        // Tampilkan di Tabel Hasil (Kanan) sebagai input yang bisa diedit
-        const outputBody = document.getElementById("outputBody");
-        outputBody.innerHTML = "";
+    function renderOutput(data) {
+        const tbody = document.getElementById('outputBody');
+        tbody.innerHTML = "";
         data.forEach(item => {
-            const row = outputBody.insertRow();
             const isTonase = item.id.toUpperCase().includes("TONASE");
+            const row = document.createElement("tr");
             if (isTonase) row.className = "tonase-row";
-            
             row.innerHTML = `
+                <td>
+                    <button class="btn-ctrl btn-add" onclick="insertNewRow(this, 'outputBody')">+</button>
+                    <button class="btn-ctrl btn-rem" onclick="removeRow(this, 'outputBody')">-</button>
+                </td>
                 <td><input type="text" class="id" value="${item.id}"></td>
                 <td><input type="text" class="st" value="${item.st}"></td>
                 <td><input type="text" class="br" value="${item.br}"></td>
                 <td><input type="text" class="ct" value="${item.ct}"></td>
             `;
+            tbody.appendChild(row);
         });
     }
 
     function copyResult() {
         const rows = Array.from(document.querySelectorAll("#outputBody tr"));
-        if (rows.length === 0) return;
-        
         const text = rows.map(row => {
-            const id = row.querySelector(".id").value;
-            const st = row.querySelector(".st").value;
-            const br = row.querySelector(".br").value;
-            const ct = row.querySelector(".ct").value;
-            return `${id}\t${st}\t${br}\t${ct}`;
+            return [
+                row.querySelector(".id").value,
+                row.querySelector(".st").value,
+                row.querySelector(".br").value,
+                row.querySelector(".ct").value
+            ].join('\t');
         }).join('\n');
         
-        navigator.clipboard.writeText(text).then(() => {
-            alert("Berhasil di-copy! Silakan paste kembali ke Spreadsheet Anda.");
-        });
+        navigator.clipboard.writeText(text).then(() => alert("Hasil dicopy!"));
     }
 
-    createRows("inputBody", 15);
+    init();
 </script>
-
 </body>
 </html>
