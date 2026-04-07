@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Balik Urutan KA - catkaujungtimur</title>
+    <style>
+        body { font-family: sans-serif; background: #222; color: #fff; padding: 20px; text-align: center; }
+        .container { background: #333; padding: 20px; border-radius: 8px; display: inline-block; min-width: 500px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; background: #fff; color: #000; }
+        th, td { border: 1px solid #999; padding: 8px; }
+        th { background: #002d5e; color: #fff; }
+        input { width: 90%; border: none; text-align: center; }
+        .btn { padding: 10px 20px; margin: 10px; cursor: pointer; border: none; border-radius: 4px; font-weight: bold; }
+        .btn-reverse { background: #f39c12; color: #000; }
+        .btn-add { background: #27ae60; color: #fff; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Program Balik Urutan KA</h2>
+    <div id="controls">
+        <button class="btn btn-add" onclick="addRow()">+ Tambah Baris</button>
+        <button class="btn btn-reverse" onclick="reverseOrder()">🔄 BALIK URUTAN</button>
+        <button class="btn" style="background:#e74c3c; color:white;" onclick="location.reload()">RESET</button>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>Identitas Kereta / Sarana</th>
+                <th>Status</th>
+                <th>Berat/Tonase</th>
+            </tr>
+        </thead>
+        <tbody id="trainBody">
+            </tbody>
+    </table>
+</div>
+
+<script>
+    function addRow(id = "", status = "E", ton = "") {
+        const tbody = document.getElementById("trainBody");
+        const rowCount = tbody.rows.length + 1;
+        const row = tbody.insertRow();
+        row.innerHTML = `
+            <td>${rowCount}</td>
+            <td><input type="text" class="train-id" value="${id}" placeholder="K3 09313"></td>
+            <td><input type="text" class="status" value="${status}"></td>
+            <td><input type="number" class="tonase" value="${ton}"></td>
+        `;
+    }
+
+    function reverseOrder() {
+        const tbody = document.getElementById("trainBody");
+        const rows = Array.from(tbody.rows);
+        
+        // Ambil data dari baris yang ada
+        const data = rows.map(row => ({
+            id: row.querySelector(".train-id").value,
+            status: row.querySelector(".status").value,
+            ton: row.querySelector(".tonase").value
+        }));
+
+        // Balik Urutannya
+        data.reverse();
+
+        // Masukkan kembali ke tabel
+        tbody.innerHTML = "";
+        data.forEach(item => addRow(item.id, item.status, item.ton));
+    }
+
+    // Munculkan 10 baris kosong pertama
+    for(let i=0; i<10; i++) addRow();
+</script>
+</body>
+</html>
