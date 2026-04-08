@@ -610,15 +610,19 @@ function insertBelow(tr, targetId) {
 function deleteRow(tr, targetId) {
     const tbody = tr.closest('tbody');
     if (tbody.querySelectorAll('tr').length <= 1) {
+        // Simpan snapshot SEBELUM kosongkan
+        if (targetId === 'inputBody')  pushHistory();
+        if (targetId === 'outputBody') pushHistoryOut();
         tr.querySelectorAll('input, textarea').forEach(i => i.value = '');
-        if (targetId === 'inputBody')  { recalcTonase(); pushHistory(); doReverse(); }
-        if (targetId === 'outputBody') { pushHistoryOut(); recalcTonaseOutput(); }
+        if (targetId === 'inputBody')  { recalcTonase(); doReverse(); }
+        if (targetId === 'outputBody') { recalcTonaseOutput(); }
         return;
     }
     // Simpan snapshot SEBELUM hapus
+    if (targetId === 'inputBody')  pushHistory();
     if (targetId === 'outputBody') pushHistoryOut();
     tr.remove();
-    if (targetId === 'inputBody')  { recalcTonase(); pushHistory(); doReverse(); }
+    if (targetId === 'inputBody')  { recalcTonase(); doReverse(); }
     if (targetId === 'outputBody') { recalcTonaseOutput(); }
 }
 
@@ -712,7 +716,9 @@ document.addEventListener('paste', function(e) {
     closePasteOverlay();
 });
 
-// Core paste: parse TSV → isi inputBody mulai referenceRow dan startCol
+// Core paste: parse TSV → isi inputBody
+// referenceRow = null  → cari baris kosong pertama lalu isi ke bawah (tidak overwrite yang sudah ada)
+// referenceRow = <tr>  → paste mulai dari baris itu (paste langsung di sel)
 function processPasteRaw(raw, referenceRow, startCol = 0) {
     pushHistory();
     // Paste baru = reset manual-edit output agar renderOutput berjalan lagi
@@ -722,20 +728,58 @@ function processPasteRaw(raw, referenceRow, startCol = 0) {
     const colKeys = ['no','tm','br','ct'];
 
     if (!referenceRow) {
-        // Replace semua
-        tbody.innerHTML = '';
-        lines.forEach(line => {
-            const c = line.split('\t');
-            tbody.appendChild(makeRow('inputBody', { no:c[0]||'', tm:c[1]||'', br:c[2]||'', ct:c[3]||'' }));
-        });
-        for (let i = 0; i < 3; i++) tbody.appendChild(makeRow('inputBody'));
+        // Cari baris kosong pertama di inputBody sebagai titik mulai
+        const allRows = Array.from(tbody.querySelectorAll('tr'));
+        const firstEmpty = allRows.find(r =>
+            ['no','tm','br','ct'].every(k => !r.querySelector('.'+k).value.trim())
+        );
+
+        if (firstEmpty) {
+            // Ada baris kosong → paste mulai dari sana, isi ke bawah
+            let cur = firstEmpty;
+            lines.forEach((line, lineIdx) => {
+                const cols = line.split('\t');
+                const fillRow = (row) => {
+                    colKeys.forEach((key, ki) => {
+                        const el = row.querySelector('.' + key);
+                        if (!el) return;
+                        el.value = cols[ki] || '';
+                        if (key === 'tm') colorTM(el);
+                        if (el.tagName === 'TEXTAREA') { el.style.height='auto'; el.style.height=el.scrollHeight+'px'; }
+                    });
+                    refreshTonaseClass(row);
+                };
+
+                if (lineIdx === 0) {
+                    fillRow(cur);
+                } else {
+                    const next = cur.nextElementSibling;
+                    if (next && next.tagName === 'TR') {
+                        fillRow(next);
+                        cur = next;
+                    } else {
+                        const nr = makeRow('inputBody', { no:cols[0]||'', tm:cols[1]||'', br:cols[2]||'', ct:cols[3]||'' });
+                        tbody.appendChild(nr);
+                        cur = nr;
+                    }
+                }
+            });
+        } else {
+            // Tidak ada baris kosong → append di bawah semua
+            lines.forEach(line => {
+                const c = line.split('\t');
+                tbody.appendChild(makeRow('inputBody', { no:c[0]||'', tm:c[1]||'', br:c[2]||'', ct:c[3]||'' }));
+            });
+        }
+        // Pastikan ada minimal 2 baris kosong di bawah
+        for (let i = 0; i < 2; i++) tbody.appendChild(makeRow('inputBody'));
+
     } else {
-        // Paste mulai dari referenceRow, kolom startCol
+        // Paste langsung dari sel — mulai dari referenceRow, kolom startCol
         let cur = referenceRow;
         lines.forEach((line, lineIdx) => {
             const cols = line.split('\t');
             if (lineIdx === 0) {
-                // Isi baris referenceRow mulai dari startCol
                 cols.forEach((val, ci) => {
                     const key = colKeys[startCol + ci];
                     if (!key) return;
@@ -743,16 +787,13 @@ function processPasteRaw(raw, referenceRow, startCol = 0) {
                     if (el) {
                         el.value = val;
                         if (key === 'tm') colorTM(el);
-                        // auto-resize textarea
                         if (el.tagName === 'TEXTAREA') { el.style.height='auto'; el.style.height=el.scrollHeight+'px'; }
                     }
                 });
                 refreshTonaseClass(cur);
             } else {
-                // Baris berikutnya: sisip baru atau gunakan baris yang sudah ada
                 const nextRow = cur.nextElementSibling;
                 if (nextRow && nextRow.tagName === 'TR') {
-                    // Isi baris yang sudah ada
                     cols.forEach((val, ci) => {
                         const key = colKeys[startCol + ci];
                         if (!key) return;
@@ -766,7 +807,6 @@ function processPasteRaw(raw, referenceRow, startCol = 0) {
                     refreshTonaseClass(nextRow);
                     cur = nextRow;
                 } else {
-                    // Sisip baris baru
                     const d = {};
                     colKeys.forEach((k, ki) => { d[k] = cols[ki - startCol] || ''; });
                     const nr = makeRow('inputBody', d);
@@ -837,4 +877,3 @@ function resetInput() {
 </script>
 </body>
 </html>
-
