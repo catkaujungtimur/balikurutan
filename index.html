@@ -129,14 +129,21 @@
         .col-tm  { width: 40px; }
         .col-br  { width: 58px; }
 
-        tbody input {
+        tbody input, tbody textarea {
             width: 100%; background: transparent;
             border: none; outline: none; color: var(--text);
             font-family: var(--mono); font-size: 14px;
             padding: 5px 2px; text-align: center;
         }
-        .col-ct input { text-align: left; padding-left: 4px; }
-        tbody input:focus { background: #2e3549; border-radius: 3px; }
+        .col-ct input, .col-ct textarea { text-align: left; padding-left: 4px; }
+        tbody input:focus, tbody textarea:focus { background: #2e3549; border-radius: 3px; }
+
+        /* Textarea auto-resize untuk kolom Catatan */
+        tbody textarea {
+            resize: none; overflow: hidden;
+            min-height: 28px; line-height: 1.4;
+            display: block; box-sizing: border-box;
+        }
 
         /* TM kolom: A/B/C/D → merah */
         input.tm-red { color:#fff; background: var(--red) !important; border-radius: 3px; font-weight: bold; }
@@ -390,6 +397,19 @@ function recalcTonase() {
     }
 }
 
+// [Poin 3] Recalc tonase khusus outputBody — independen dari inputBody
+function recalcTonaseOutput() {
+    const rows = Array.from(document.getElementById('outputBody').querySelectorAll('tr'));
+    let total = 0, tonaseRow = null;
+    rows.forEach(tr => {
+        const noVal = tr.querySelector('.no').value;
+        const brVal = tr.querySelector('.br').value;
+        if (isTonase(noVal)) tonaseRow = tr;
+        else { const n = parseFloat(brVal); if (!isNaN(n)) total += n; }
+    });
+    if (tonaseRow) tonaseRow.querySelector('.br').value = total > 0 ? total : '';
+}
+
 // ═══════════════════════════════════════════════════════
 //  BUAT BARIS
 // ═══════════════════════════════════════════════════════
@@ -423,36 +443,61 @@ function makeRow(targetId, d = {}) {
     function makeCell(cls, val, opts = {}) {
         const td = document.createElement('td');
         td.className = cls;
-        const inp = document.createElement('input');
-        inp.type = 'text';
+
+        // Kolom Catatan pakai textarea agar bisa auto-resize (Poin 2)
+        const isCt = cls === 'col-ct';
+        const inp = isCt ? document.createElement('textarea') : document.createElement('input');
+        if (!isCt) inp.type = 'text';
         inp.className = cls.replace('col-','');
         inp.value = val;
         if (opts.maxlength) inp.maxLength = opts.maxlength;
+        if (isCt) { inp.rows = 1; inp.spellcheck = false; }
+
+        // Auto-resize textarea
+        function autoResize() {
+            if (!isCt) return;
+            inp.style.height = 'auto';
+            inp.style.height = inp.scrollHeight + 'px';
+        }
+        if (isCt) setTimeout(autoResize, 0);
 
         inp.addEventListener('keydown', e => {
+            // Textarea: Enter tidak auto-resize trap, izinkan Enter di ct
+            if (isCt && e.key === 'Enter') return;
             if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Enter','Tab'].includes(e.key))
                 onArrowKey(e, inp, targetId);
         });
 
         inp.addEventListener('input', () => {
+            if (isCt) autoResize();
             if (cls === 'col-tm') colorTM(inp);
             if (cls === 'col-no') refreshTonaseClass(tr);
+
+            // [Poin 4] Hanya inputBody yang mempengaruhi outputBody
             if (targetId === 'inputBody') {
-                // Recalc tonase setiap edit berat atau nama sarana
                 if (cls === 'col-br' || cls === 'col-no') recalcTonase();
                 pushHistory();
                 doReverse();
             }
+            // outputBody: hanya recalc tonase output saja, TIDAK trigger doReverse
+            if (targetId === 'outputBody') {
+                if (cls === 'col-br' || cls === 'col-no') recalcTonaseOutput();
+            }
         });
 
-        // [POIN 1b] Paste langsung di sel kosong inputBody
-        // Tangkap paste multi-baris di dalam sel No. Sarana
-        if (targetId === 'inputBody' && cls === 'col-no') {
+        // [Poin 1] Paste multi-kolom di SEL MANA SAJA di inputBody
+        if (targetId === 'inputBody') {
             inp.addEventListener('paste', e => {
                 const raw = (e.clipboardData || window.clipboardData).getData('text');
-                if (!raw.includes('\n') && !raw.includes('\t')) return; // paste biasa 1 sel
+                // Kalau hanya teks biasa 1 sel (tidak ada tab & tidak multi-baris) → biarkan paste normal
+                const isMultiCol  = raw.includes('\t');
+                const isMultiLine = raw.includes('\n');
+                if (!isMultiCol && !isMultiLine) return;
                 e.preventDefault();
-                processPasteRaw(raw, tr);
+                // Tentukan kolom awal berdasarkan sel yang sedang aktif
+                const colOrder = ['no','tm','br','ct'];
+                const startCol = colOrder.indexOf(inp.className.split(' ')[0]);
+                processPasteRaw(raw, tr, startCol >= 0 ? startCol : 0);
             });
         }
 
@@ -483,6 +528,7 @@ function insertAbove(tr, targetId) {
     tr.parentNode.insertBefore(nr, tr);
     nr.querySelector('.no').focus();
     if (targetId === 'inputBody') { recalcTonase(); pushHistory(); doReverse(); }
+    if (targetId === 'outputBody') { recalcTonaseOutput(); }
 }
 
 function insertBelow(tr, targetId) {
@@ -490,17 +536,20 @@ function insertBelow(tr, targetId) {
     tr.after(nr);
     nr.querySelector('.no').focus();
     if (targetId === 'inputBody') { recalcTonase(); pushHistory(); doReverse(); }
+    if (targetId === 'outputBody') { recalcTonaseOutput(); }
 }
 
 function deleteRow(tr, targetId) {
     const tbody = tr.closest('tbody');
     if (tbody.querySelectorAll('tr').length <= 1) {
-        tr.querySelectorAll('input').forEach(i => i.value = '');
+        tr.querySelectorAll('input, textarea').forEach(i => i.value = '');
         if (targetId === 'inputBody') { recalcTonase(); pushHistory(); doReverse(); }
+        if (targetId === 'outputBody') { recalcTonaseOutput(); }
         return;
     }
     tr.remove();
     if (targetId === 'inputBody') { recalcTonase(); pushHistory(); doReverse(); }
+    if (targetId === 'outputBody') { recalcTonaseOutput(); }
 }
 
 // ═══════════════════════════════════════════════════════
@@ -512,7 +561,7 @@ function readRows(tbodyId) {
         no: tr.querySelector('.no').value,
         tm: tr.querySelector('.tm').value,
         br: tr.querySelector('.br').value,
-        ct: tr.querySelector('.ct').value,
+        ct: tr.querySelector('.ct').value,   // textarea juga punya .value
     }));
 }
 
@@ -589,11 +638,12 @@ document.addEventListener('paste', function(e) {
     closePasteOverlay();
 });
 
-// Core: parse teks TSV/CSV → isi inputBody mulai dari baris referenceRow (atau replace all)
-function processPasteRaw(raw, referenceRow) {
+// Core paste: parse TSV → isi inputBody mulai referenceRow dan startCol
+function processPasteRaw(raw, referenceRow, startCol = 0) {
     pushHistory();
     const lines = raw.trim().split(/\r?\n/);
     const tbody = document.getElementById('inputBody');
+    const colKeys = ['no','tm','br','ct'];
 
     if (!referenceRow) {
         // Replace semua
@@ -602,27 +652,51 @@ function processPasteRaw(raw, referenceRow) {
             const c = line.split('\t');
             tbody.appendChild(makeRow('inputBody', { no:c[0]||'', tm:c[1]||'', br:c[2]||'', ct:c[3]||'' }));
         });
-        // Minimal 3 baris kosong di bawah
         for (let i = 0; i < 3; i++) tbody.appendChild(makeRow('inputBody'));
     } else {
-        // Paste mulai dari baris referenceRow ke bawah
+        // Paste mulai dari referenceRow, kolom startCol
         let cur = referenceRow;
-        lines.forEach((line, i) => {
-            const c = line.split('\t');
-            const d = { no:c[0]||'', tm:c[1]||'', br:c[2]||'', ct:c[3]||'' };
-            if (i === 0) {
-                // Isi baris saat ini
-                cur.querySelector('.no').value = d.no;
-                cur.querySelector('.tm').value = d.tm;
-                cur.querySelector('.br').value = d.br;
-                cur.querySelector('.ct').value = d.ct;
-                colorTM(cur.querySelector('.tm'));
+        lines.forEach((line, lineIdx) => {
+            const cols = line.split('\t');
+            if (lineIdx === 0) {
+                // Isi baris referenceRow mulai dari startCol
+                cols.forEach((val, ci) => {
+                    const key = colKeys[startCol + ci];
+                    if (!key) return;
+                    const el = cur.querySelector('.' + key);
+                    if (el) {
+                        el.value = val;
+                        if (key === 'tm') colorTM(el);
+                        // auto-resize textarea
+                        if (el.tagName === 'TEXTAREA') { el.style.height='auto'; el.style.height=el.scrollHeight+'px'; }
+                    }
+                });
                 refreshTonaseClass(cur);
             } else {
-                // Sisip baris baru di bawah cur
-                const nr = makeRow('inputBody', d);
-                cur.after(nr);
-                cur = nr;
+                // Baris berikutnya: sisip baru atau gunakan baris yang sudah ada
+                const nextRow = cur.nextElementSibling;
+                if (nextRow && nextRow.tagName === 'TR') {
+                    // Isi baris yang sudah ada
+                    cols.forEach((val, ci) => {
+                        const key = colKeys[startCol + ci];
+                        if (!key) return;
+                        const el = nextRow.querySelector('.' + key);
+                        if (el) {
+                            el.value = val;
+                            if (key === 'tm') colorTM(el);
+                            if (el.tagName === 'TEXTAREA') { el.style.height='auto'; el.style.height=el.scrollHeight+'px'; }
+                        }
+                    });
+                    refreshTonaseClass(nextRow);
+                    cur = nextRow;
+                } else {
+                    // Sisip baris baru
+                    const d = {};
+                    colKeys.forEach((k, ki) => { d[k] = cols[ki - startCol] || ''; });
+                    const nr = makeRow('inputBody', d);
+                    cur.after(nr);
+                    cur = nr;
+                }
             }
         });
     }
@@ -685,3 +759,4 @@ function resetInput() {
 </script>
 </body>
 </html>
+
