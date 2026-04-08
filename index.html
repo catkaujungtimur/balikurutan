@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -278,16 +279,32 @@
 
 const undoStack = [], redoStack = [];
 let suspendHistory = false;
+let _histDebounceTimer = null;
 
 function snapshotInput() {
     return readRows('inputBody').map(r => ({ ...r }));
 }
 
+// pushHistory LANGSUNG — untuk aksi struktural (sisip/hapus baris, paste, reset)
 function pushHistory() {
     if (suspendHistory) return;
+    if (_histDebounceTimer) { clearTimeout(_histDebounceTimer); _histDebounceTimer = null; }
     undoStack.push(snapshotInput());
     redoStack.length = 0;
     updateUndoUI();
+}
+
+// pushHistoryDebounced — untuk ketikan karakter per karakter
+// Menunggu 700ms jeda ketik sebelum menyimpan snapshot
+function pushHistoryDebounced() {
+    if (suspendHistory) return;
+    if (_histDebounceTimer) clearTimeout(_histDebounceTimer);
+    _histDebounceTimer = setTimeout(() => {
+        _histDebounceTimer = null;
+        undoStack.push(snapshotInput());
+        redoStack.length = 0;
+        updateUndoUI();
+    }, 700);
 }
 
 function updateUndoUI() {
@@ -476,7 +493,7 @@ function makeRow(targetId, d = {}) {
             // [Poin 4] Hanya inputBody yang mempengaruhi outputBody
             if (targetId === 'inputBody') {
                 if (cls === 'col-br' || cls === 'col-no') recalcTonase();
-                pushHistory();
+                pushHistoryDebounced(); // debounced agar undo bertahap, bukan per karakter
                 doReverse();
             }
             // outputBody: hanya recalc tonase output saja, TIDAK trigger doReverse
@@ -485,19 +502,28 @@ function makeRow(targetId, d = {}) {
             }
         });
 
-        // [Poin 1] Paste multi-kolom di SEL MANA SAJA di inputBody
+        // Paste di sel inputBody — tangkap semua kasus termasuk HP
         if (targetId === 'inputBody') {
             inp.addEventListener('paste', e => {
                 const raw = (e.clipboardData || window.clipboardData).getData('text');
-                // Kalau hanya teks biasa 1 sel (tidak ada tab & tidak multi-baris) → biarkan paste normal
                 const isMultiCol  = raw.includes('\t');
                 const isMultiLine = raw.includes('\n');
-                if (!isMultiCol && !isMultiLine) return;
-                e.preventDefault();
-                // Tentukan kolom awal berdasarkan sel yang sedang aktif
-                const colOrder = ['no','tm','br','ct'];
-                const startCol = colOrder.indexOf(inp.className.split(' ')[0]);
-                processPasteRaw(raw, tr, startCol >= 0 ? startCol : 0);
+
+                if (isMultiCol || isMultiLine) {
+                    // Format TSV lengkap (dari PC) — proses langsung
+                    e.preventDefault();
+                    const colOrder = ['no','tm','br','ct'];
+                    const startCol = colOrder.indexOf(inp.className.split(' ')[0]);
+                    processPasteRaw(raw, tr, startCol >= 0 ? startCol : 0);
+                } else {
+                    // Format HP: teks biasa tanpa tab (clipboard HP tidak simpan format TSV)
+                    // Tampilkan overlay dengan teks sudah terisi supaya user bisa proses
+                    e.preventDefault();
+                    const ta = document.getElementById('pasteTextarea');
+                    ta.value = raw;
+                    document.getElementById('pasteZone').classList.add('active');
+                    setTimeout(() => ta.focus(), 150);
+                }
             });
         }
 
