@@ -7,18 +7,18 @@
     <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg:       #1a1f2e;
-            --panel:    #242938;
-            --border:   #353c52;
-            --accent:   #f39c12;
-            --blue:     #3a8dde;
-            --green:    #27ae60;
-            --red:      #e74c3c;
-            --text:     #dce3f0;
-            --muted:    #7a8499;
-            --tonase:   #2a2010;
-            --mono:     'Share Tech Mono', monospace;
-            --ui:       'Barlow Condensed', sans-serif;
+            --bg:     #1a1f2e;
+            --panel:  #242938;
+            --border: #353c52;
+            --accent: #f39c12;
+            --blue:   #3a8dde;
+            --green:  #27ae60;
+            --red:    #e74c3c;
+            --text:   #dce3f0;
+            --muted:  #7a8499;
+            --tonase: #2a2010;
+            --mono:   'Share Tech Mono', monospace;
+            --ui:     'Barlow Condensed', sans-serif;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -28,128 +28,109 @@
             background: var(--bg);
             color: var(--text);
             min-height: 100vh;
-            padding: 18px 12px 40px;
+            padding: 14px 10px 40px;
         }
 
         /* ── HEADER ── */
-        header {
-            text-align: center;
-            margin-bottom: 18px;
-        }
+        header { text-align: center; margin-bottom: 14px; }
         header h1 {
-            font-size: 22px;
-            font-weight: 700;
-            letter-spacing: 2px;
-            color: var(--accent);
+            font-size: 20px; font-weight: 700;
+            letter-spacing: 2px; color: var(--accent);
             text-transform: uppercase;
         }
-        header p {
-            font-size: 12px;
-            color: var(--muted);
-            margin-top: 3px;
-            letter-spacing: 1px;
+        header p { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+        /* ── UNDO/REDO BAR ── */
+        .undobar {
+            display: flex; justify-content: center; gap: 8px;
+            margin-bottom: 12px;
+        }
+        .undobar .btn { min-width: 90px; }
+        .undobar .hist-info {
+            font-size: 11px; color: var(--muted);
+            align-self: center; letter-spacing: .5px;
         }
 
         /* ── LAYOUT ── */
         .workspace {
-            display: flex;
-            gap: 12px;
-            justify-content: center;
-            flex-wrap: wrap;
+            display: flex; gap: 12px;
+            justify-content: center; flex-wrap: wrap;
         }
 
         .panel {
             background: var(--panel);
             border: 1px solid var(--border);
             border-radius: 8px;
-            width: 520px;
+            width: 530px;
             overflow: hidden;
         }
 
         .panel-header {
-            display: flex;
-            align-items: center;
+            display: flex; align-items: center;
             justify-content: space-between;
-            padding: 10px 14px;
+            padding: 9px 12px;
             background: #1e2333;
             border-bottom: 2px solid var(--border);
         }
         .panel-title {
-            font-size: 13px;
-            font-weight: 700;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
+            font-size: 13px; font-weight: 700;
+            letter-spacing: 1.5px; text-transform: uppercase;
         }
         .panel-title span {
-            display: inline-block;
-            width: 8px; height: 8px;
-            border-radius: 50%;
-            margin-right: 7px;
-            vertical-align: middle;
+            display: inline-block; width: 8px; height: 8px;
+            border-radius: 50%; margin-right: 7px; vertical-align: middle;
         }
-        #panelInput .panel-title span { background: var(--blue); }
+        #panelInput  .panel-title span { background: var(--blue); }
         #panelOutput .panel-title span { background: var(--green); }
 
         .panel-hint {
-            font-size: 10px;
-            color: var(--muted);
-            padding: 6px 14px 4px;
-            letter-spacing: 0.5px;
+            font-size: 10px; color: var(--muted);
+            padding: 5px 12px 3px; letter-spacing: .4px;
         }
 
         /* ── BUTTONS ── */
         .btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
+            display: inline-flex; align-items: center; gap: 4px;
             padding: 5px 11px;
-            font-family: var(--ui);
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 0.8px;
+            font-family: var(--ui); font-size: 12px;
+            font-weight: 700; letter-spacing: .8px;
             text-transform: uppercase;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: opacity .15s, transform .1s;
+            border: none; border-radius: 4px;
+            cursor: pointer; transition: opacity .15s, transform .1s;
         }
-        .btn:hover { opacity: .85; }
+        .btn:hover  { opacity: .85; }
         .btn:active { transform: scale(.96); }
-        .btn-accent  { background: var(--accent);  color: #1a1200; }
-        .btn-green   { background: var(--green);   color: #fff; }
-        .btn-red     { background: var(--red);     color: #fff; }
-        .btn-blue    { background: var(--blue);    color: #fff; }
-        .btn-muted   { background: #353c52;        color: var(--text); }
+        .btn:disabled { opacity: .3; cursor: default; }
+        .btn-accent { background: var(--accent); color: #1a1200; }
+        .btn-green  { background: var(--green);  color: #fff; }
+        .btn-red    { background: var(--red);    color: #fff; }
+        .btn-blue   { background: var(--blue);   color: #fff; }
+        .btn-muted  { background: #353c52;       color: var(--text); }
 
-        .btn-row  {
-            width: 22px; height: 22px;
-            padding: 0; font-size: 15px; font-weight: 700;
-            border-radius: 3px;
-            line-height: 1;
-            border: none; cursor: pointer;
-            transition: opacity .12s;
+        /* +/- per baris */
+        .btn-row {
+            width: 24px; height: 24px;
+            padding: 0; font-size: 16px; font-weight: 700;
+            line-height: 1; border: none; border-radius: 3px;
+            cursor: pointer; transition: opacity .12s;
         }
         .btn-row:hover { opacity: .8; }
-        .btn-ins  { background: var(--green); color: #fff; }
-        .btn-del  { background: var(--red);   color: #fff; }
+        .btn-ins-above { background: #1a6eae; color: #fff; }  /* biru — sisip di atas */
+        .btn-ins-below { background: var(--green); color: #fff; }  /* hijau — sisip di bawah */
+        .btn-del       { background: var(--red);   color: #fff; }
 
         /* ── TABLE ── */
-        .tbl-wrap { overflow-x: auto; padding: 0 0 6px; }
+        .tbl-wrap { overflow-x: auto; padding: 0 0 4px; }
 
         table {
-            width: 100%;
-            border-collapse: collapse;
-            font-family: var(--mono);
-            font-size: 11.5px;
+            width: 100%; border-collapse: collapse;
+            font-family: var(--mono); font-size: 14px; /* ← LEBIH BESAR */
         }
 
         thead th {
-            background: #1a1f2e;
-            color: var(--muted);
-            font-family: var(--ui);
-            font-size: 10px;
-            font-weight: 600;
-            letter-spacing: 1px;
+            background: #1a1f2e; color: var(--muted);
+            font-family: var(--ui); font-size: 10px;
+            font-weight: 600; letter-spacing: 1px;
             text-transform: uppercase;
             padding: 6px 4px;
             border-bottom: 1px solid var(--border);
@@ -158,49 +139,36 @@
 
         tbody tr { border-bottom: 1px solid #2a3045; }
         tbody tr:hover { background: #272d40; }
+        tbody td { padding: 2px 3px; vertical-align: middle; }
 
-        tbody td {
-            padding: 2px 3px;
-            vertical-align: middle;
-        }
-
-        /* col widths */
-        .col-act  { width: 52px; text-align: center; }
-        .col-no   { width: 34%; }
-        .col-st   { width: 38px; }
-        .col-br   { width: 55px; }
-        .col-ct   { } /* flex */
+        .col-act { width: 56px; text-align: center; }
+        .col-no  { width: 33%; }
+        .col-st  { width: 40px; }
+        .col-br  { width: 58px; }
 
         tbody input {
-            width: 100%;
-            background: transparent;
-            border: none;
-            outline: none;
+            width: 100%; background: transparent;
+            border: none; outline: none;
             color: var(--text);
             font-family: var(--mono);
-            font-size: 11.5px;
-            padding: 4px 2px;
-            text-align: center;
+            font-size: 14px; /* ← LEBIH BESAR */
+            padding: 5px 2px; text-align: center;
         }
         .col-ct input { text-align: left; padding-left: 4px; }
         tbody input:focus { background: #2e3549; border-radius: 3px; }
 
-        /* ST coloring */
-        input.st-e  { color: #fff; background: #27ae60 !important; border-radius: 3px; font-weight: bold; }
-        input.st-d  { color: #fff; background: #e74c3c !important; border-radius: 3px; font-weight: bold; }
+        input.st-e { color:#fff; background:#27ae60!important; border-radius:3px; font-weight:bold; }
+        input.st-d { color:#fff; background:#e74c3c!important; border-radius:3px; font-weight:bold; }
 
-        /* Tonase row */
         tr.row-tonase { background: var(--tonase) !important; }
         tr.row-tonase input { color: var(--accent) !important; font-weight: bold; }
 
-        /* ── FOOTER ACTIONS ── */
+        /* ── FOOTER ── */
         .panel-footer {
-            display: flex;
-            gap: 8px;
-            padding: 10px 14px;
+            display: flex; gap: 8px;
+            padding: 9px 12px;
             border-top: 1px solid var(--border);
-            background: #1e2333;
-            flex-wrap: wrap;
+            background: #1e2333; flex-wrap: wrap;
         }
 
         /* ── PASTE OVERLAY ── */
@@ -208,20 +176,17 @@
             position: fixed; inset: 0;
             background: rgba(10,14,25,.82);
             display: flex; align-items: center; justify-content: center;
-            z-index: 999;
-            opacity: 0; pointer-events: none;
+            z-index: 999; opacity: 0; pointer-events: none;
             transition: opacity .2s;
         }
         #pasteZone.active { opacity: 1; pointer-events: all; }
         #pasteZone .box {
             background: var(--panel);
             border: 2px dashed var(--accent);
-            border-radius: 12px;
-            padding: 40px 60px;
-            text-align: center;
+            border-radius: 12px; padding: 36px 56px; text-align: center;
         }
-        #pasteZone .box h2 { font-size: 22px; color: var(--accent); margin-bottom: 8px; }
-        #pasteZone .box p  { color: var(--muted); font-size: 13px; }
+        #pasteZone .box h2 { font-size: 21px; color: var(--accent); margin-bottom: 8px; }
+        #pasteZone .box p  { color: var(--muted); font-size: 12px; }
     </style>
 </head>
 <body>
@@ -231,8 +196,15 @@
     <p>catkaujungtimur · Ketapang</p>
 </header>
 
+<!-- UNDO / REDO BAR -->
+<div class="undobar">
+    <button class="btn btn-muted" id="btnUndo" onclick="undo()" disabled>↩ Undo</button>
+    <button class="btn btn-muted" id="btnRedo" onclick="redo()" disabled>↪ Redo</button>
+    <span class="hist-info" id="histInfo"></span>
+</div>
+
 <div class="workspace">
-    <!-- ── PANEL KIRI: INPUT ── -->
+    <!-- PANEL KIRI -->
     <div class="panel" id="panelInput">
         <div class="panel-header">
             <div class="panel-title"><span></span>Data Asli</div>
@@ -241,65 +213,153 @@
                 <button class="btn btn-muted" onclick="resetInput()">↺ Reset</button>
             </div>
         </div>
-        <p class="panel-hint">Tekan Ctrl+V di mana saja untuk paste dari spreadsheet. Atau ketik manual.</p>
+        <p class="panel-hint">Ctrl+V di mana saja untuk paste dari spreadsheet · ↑↓←→ untuk navigasi sel</p>
         <div class="tbl-wrap">
             <table>
-                <thead>
-                    <tr>
-                        <th class="col-act">+/−</th>
-                        <th class="col-no">No. Sarana</th>
-                        <th class="col-st">ST</th>
-                        <th class="col-br">Berat</th>
-                        <th class="col-ct">Catatan / Order</th>
-                    </tr>
-                </thead>
+                <thead><tr>
+                    <th class="col-act">+/−</th>
+                    <th class="col-no">No. Sarana</th>
+                    <th class="col-st">ST</th>
+                    <th class="col-br">Berat</th>
+                    <th class="col-ct">Catatan / Order</th>
+                </tr></thead>
                 <tbody id="inputBody"></tbody>
             </table>
         </div>
         <div class="panel-footer">
-            <button class="btn btn-green" onclick="addRowTo('inputBody')">+ Tambah Baris</button>
+            <button class="btn btn-green"  onclick="addRowTo('inputBody')">+ Baris Bawah</button>
             <button class="btn btn-accent" onclick="doReverse()">⇅ Proses Balik →</button>
         </div>
     </div>
 
-    <!-- ── PANEL KANAN: OUTPUT ── -->
+    <!-- PANEL KANAN -->
     <div class="panel" id="panelOutput">
         <div class="panel-header">
             <div class="panel-title"><span></span>Hasil Balik</div>
             <button class="btn btn-green" onclick="copyOutput()">⎘ Copy Hasil</button>
         </div>
-        <p class="panel-hint">Hasil otomatis saat data diisi. Edit bebas di sini sebelum copy.</p>
+        <p class="panel-hint">Edit bebas · ↑↓←→ untuk navigasi sel</p>
         <div class="tbl-wrap">
             <table>
-                <thead>
-                    <tr>
-                        <th class="col-act">+/−</th>
-                        <th class="col-no">No. Sarana</th>
-                        <th class="col-st">ST</th>
-                        <th class="col-br">Berat</th>
-                        <th class="col-ct">Catatan / Order</th>
-                    </tr>
-                </thead>
+                <thead><tr>
+                    <th class="col-act">+/−</th>
+                    <th class="col-no">No. Sarana</th>
+                    <th class="col-st">ST</th>
+                    <th class="col-br">Berat</th>
+                    <th class="col-ct">Catatan / Order</th>
+                </tr></thead>
                 <tbody id="outputBody"></tbody>
             </table>
         </div>
         <div class="panel-footer">
-            <button class="btn btn-green" onclick="addRowTo('outputBody')">+ Tambah Baris</button>
+            <button class="btn btn-green" onclick="addRowTo('outputBody')">+ Baris Bawah</button>
             <button class="btn btn-green" onclick="copyOutput()">⎘ Copy Hasil</button>
         </div>
     </div>
 </div>
 
-<!-- Paste overlay hint -->
+<!-- Paste overlay -->
 <div id="pasteZone">
     <div class="box">
         <h2>📋 Paste Siap</h2>
         <p>Tekan Ctrl+V sekarang untuk memasukkan data dari spreadsheet</p>
-        <p style="margin-top:10px; font-size:11px;">atau klik di luar untuk batal</p>
+        <p style="margin-top:10px;font-size:10px;">klik di luar untuk batal</p>
     </div>
 </div>
 
 <script>
+// ═══════════════════════════════════════════════════════
+//  UNDO / REDO STACK
+//  Snapshot = array of {no,st,br,ct} dari inputBody
+// ═══════════════════════════════════════════════════════
+
+const undoStack = [];
+const redoStack = [];
+let suspendHistory = false; // Kunci saat restore agar tidak push lagi
+
+function snapshotInput() {
+    return readRows('inputBody').map(r => ({ ...r }));
+}
+
+function pushHistory() {
+    if (suspendHistory) return;
+    undoStack.push(snapshotInput());
+    redoStack.length = 0; // Clear redo saat ada aksi baru
+    updateUndoUI();
+}
+
+function updateUndoUI() {
+    document.getElementById('btnUndo').disabled = undoStack.length === 0;
+    document.getElementById('btnRedo').disabled = redoStack.length === 0;
+    const total = undoStack.length + redoStack.length;
+    document.getElementById('histInfo').textContent =
+        total > 0 ? `riwayat: ${undoStack.length} undo / ${redoStack.length} redo` : '';
+}
+
+function restoreSnapshot(snap) {
+    suspendHistory = true;
+    const tbody = document.getElementById('inputBody');
+    tbody.innerHTML = '';
+    snap.forEach(d => tbody.appendChild(makeRow('inputBody', d)));
+    if (snap.length === 0) for (let i = 0; i < 5; i++) tbody.appendChild(makeRow('inputBody'));
+    doReverse();
+    suspendHistory = false;
+    updateUndoUI();
+}
+
+function undo() {
+    if (undoStack.length === 0) return;
+    redoStack.push(snapshotInput());
+    restoreSnapshot(undoStack.pop());
+}
+
+function redo() {
+    if (redoStack.length === 0) return;
+    undoStack.push(snapshotInput());
+    restoreSnapshot(redoStack.pop());
+}
+
+// Keyboard shortcut: Ctrl+Z / Ctrl+Y
+document.addEventListener('keydown', function(e) {
+    if (e.ctrlKey && e.key === 'z') { e.preventDefault(); undo(); }
+    if (e.ctrlKey && e.key === 'y') { e.preventDefault(); redo(); }
+});
+
+// ═══════════════════════════════════════════════════════
+//  NAVIGASI KEYBOARD ANTAR SEL (↑↓←→)
+//  Kumpulkan semua input dalam tabel, navigasi by index
+// ═══════════════════════════════════════════════════════
+
+function getAllInputs(tbodyId) {
+    // Urutan: per baris, kolom no → st → br → ct
+    return Array.from(document.getElementById(tbodyId)
+        .querySelectorAll('input.no, input.st, input.br, input.ct'));
+}
+
+function onArrowKey(e, input, tbodyId) {
+    const COLS = 4; // no, st, br, ct
+    const all = getAllInputs(tbodyId);
+    const idx = all.indexOf(input);
+    if (idx === -1) return;
+
+    let next = -1;
+    if (e.key === 'ArrowRight' || (e.key === 'Tab' && !e.shiftKey)) {
+        next = idx + 1;
+    } else if (e.key === 'ArrowLeft' || (e.key === 'Tab' && e.shiftKey)) {
+        next = idx - 1;
+    } else if (e.key === 'ArrowDown' || e.key === 'Enter') {
+        next = idx + COLS;
+    } else if (e.key === 'ArrowUp') {
+        next = idx - COLS;
+    }
+
+    if (next >= 0 && next < all.length) {
+        e.preventDefault();
+        all[next].focus();
+        all[next].select();
+    }
+}
+
 // ═══════════════════════════════════════════════════════
 //  UTILITAS
 // ═══════════════════════════════════════════════════════
@@ -311,57 +371,101 @@ function colorST(input) {
     else if (v === 'D') input.classList.add('st-d');
 }
 
-function isTonase(noSarana) {
-    return noSarana.trim().toUpperCase().includes('TONASE');
-}
-
-// Buat satu baris <tr>
-function makeRow(targetId, d = { no:'', st:'', br:'', ct:'' }) {
-    const tr = document.createElement('tr');
-    if (isTonase(d.no)) tr.classList.add('row-tonase');
-
-    tr.innerHTML = `
-        <td class="col-act">
-            <button class="btn-row btn-ins" title="Sisip baris di bawah" onclick="insertBelow(this,'${targetId}')">+</button>
-            <button class="btn-row btn-del" title="Hapus baris ini" onclick="deleteRow(this,'${targetId}')">−</button>
-        </td>
-        <td class="col-no">
-            <input type="text" class="no" value="${esc(d.no)}"
-                oninput="onInputChange(this,'${targetId}')"
-                onblur="refreshTonaseClass(this)">
-        </td>
-        <td class="col-st">
-            <input type="text" class="st" value="${esc(d.st)}" maxlength="1"
-                oninput="colorST(this); if('${targetId}'==='inputBody') doReverse()">
-        </td>
-        <td class="col-br">
-            <input type="text" class="br" value="${esc(d.br)}"
-                oninput="if('${targetId}'==='inputBody') doReverse()">
-        </td>
-        <td class="col-ct">
-            <input type="text" class="ct" value="${esc(d.ct)}"
-                oninput="if('${targetId}'==='inputBody') doReverse()">
-        </td>
-    `;
-
-    // Warnai ST setelah createElement
-    setTimeout(() => colorST(tr.querySelector('.st')), 0);
-    return tr;
+function isTonase(str) {
+    return str.trim().toUpperCase().includes('TONASE');
 }
 
 function esc(str) {
-    return String(str || '').replace(/"/g, '&quot;');
+    return String(str || '').replace(/&/g,'&amp;').replace(/"/g,'&quot;');
 }
 
-function refreshTonaseClass(input) {
-    const tr = input.closest('tr');
-    if (isTonase(input.value)) tr.classList.add('row-tonase');
+function refreshTonaseClass(tr) {
+    const no = tr.querySelector('.no').value;
+    if (isTonase(no)) tr.classList.add('row-tonase');
     else tr.classList.remove('row-tonase');
 }
 
-function onInputChange(input, targetId) {
-    refreshTonaseClass(input);
-    if (targetId === 'inputBody') doReverse();
+// ═══════════════════════════════════════════════════════
+//  BUAT BARIS
+// ═══════════════════════════════════════════════════════
+
+function makeRow(targetId, d = {}) {
+    const { no='', st='', br='', ct='' } = d;
+    const tr = document.createElement('tr');
+
+    // Sel aksi: 3 tombol — sisip atas, sisip bawah, hapus
+    const tdAct = document.createElement('td');
+    tdAct.className = 'col-act';
+    tdAct.style.cssText = 'white-space:nowrap;';
+
+    const btnAbove = document.createElement('button');
+    btnAbove.className = 'btn-row btn-ins-above';
+    btnAbove.title = 'Sisip baris di ATAS';
+    btnAbove.textContent = '↑';
+    btnAbove.onclick = () => insertAbove(tr, targetId);
+
+    const btnBelow = document.createElement('button');
+    btnBelow.className = 'btn-row btn-ins-below';
+    btnBelow.title = 'Sisip baris di BAWAH';
+    btnBelow.textContent = '+';
+    btnBelow.onclick = () => insertBelow(tr, targetId);
+
+    const btnDel = document.createElement('button');
+    btnDel.className = 'btn-row btn-del';
+    btnDel.title = 'Hapus baris ini';
+    btnDel.textContent = '−';
+    btnDel.onclick = () => deleteRow(tr, targetId);
+
+    tdAct.append(btnAbove, btnBelow, btnDel);
+    tr.appendChild(tdAct);
+
+    // Helper buat td+input
+    function makeCell(cls, val, extra = {}) {
+        const td = document.createElement('td');
+        td.className = cls;
+        const inp = document.createElement('input');
+        inp.type = 'text';
+        inp.className = cls.replace('col-','');
+        inp.value = val;
+        if (extra.maxlength) inp.maxLength = extra.maxlength;
+
+        // Navigasi keyboard
+        inp.addEventListener('keydown', function(e) {
+            if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Enter'].includes(e.key)) {
+                onArrowKey(e, inp, targetId);
+            }
+            // Tab override agar lewat onArrowKey juga
+            if (e.key === 'Tab') {
+                onArrowKey(e, inp, targetId);
+            }
+        });
+
+        // Oninput actions
+        inp.addEventListener('input', function() {
+            if (cls === 'col-st') colorST(inp);
+            if (cls === 'col-no') refreshTonaseClass(tr);
+            if (targetId === 'inputBody') {
+                pushHistory();
+                doReverse();
+            }
+        });
+
+        td.appendChild(inp);
+        return td;
+    }
+
+    tr.appendChild(makeCell('col-no', no));
+    tr.appendChild(makeCell('col-st', st, { maxlength: 1 }));
+    tr.appendChild(makeCell('col-br', br));
+    tr.appendChild(makeCell('col-ct', ct));
+
+    // Warnai setelah build
+    setTimeout(() => {
+        colorST(tr.querySelector('.st'));
+        refreshTonaseClass(tr);
+    }, 0);
+
+    return tr;
 }
 
 // ═══════════════════════════════════════════════════════
@@ -370,31 +474,40 @@ function onInputChange(input, targetId) {
 
 function addRowTo(targetId, d) {
     const tbody = document.getElementById(targetId);
-    tbody.appendChild(makeRow(targetId, d));
+    const newRow = makeRow(targetId, d);
+    tbody.appendChild(newRow);
+    if (targetId === 'inputBody') { pushHistory(); doReverse(); }
 }
 
-function insertBelow(btn, targetId) {
-    const tr = btn.closest('tr');
+// Sisip di ATAS baris ini
+function insertAbove(tr, targetId) {
+    const newRow = makeRow(targetId);
+    tr.parentNode.insertBefore(newRow, tr);
+    newRow.querySelector('.no').focus();
+    if (targetId === 'inputBody') { pushHistory(); doReverse(); }
+}
+
+// Sisip di BAWAH baris ini
+function insertBelow(tr, targetId) {
     const newRow = makeRow(targetId);
     tr.after(newRow);
-    // Fokus ke input No. Sarana baris baru
     newRow.querySelector('.no').focus();
+    if (targetId === 'inputBody') { pushHistory(); doReverse(); }
 }
 
-function deleteRow(btn, targetId) {
-    const tbody = document.getElementById(targetId);
-    // Jangan hapus kalau tinggal 1 baris
+function deleteRow(tr, targetId) {
+    const tbody = tr.closest('tbody');
     if (tbody.querySelectorAll('tr').length <= 1) {
-        btn.closest('tr').querySelectorAll('input').forEach(i => i.value = '');
-        if (targetId === 'inputBody') doReverse();
+        tr.querySelectorAll('input').forEach(i => i.value = '');
+        if (targetId === 'inputBody') { pushHistory(); doReverse(); }
         return;
     }
-    btn.closest('tr').remove();
-    if (targetId === 'inputBody') doReverse();
+    tr.remove();
+    if (targetId === 'inputBody') { pushHistory(); doReverse(); }
 }
 
 // ═══════════════════════════════════════════════════════
-//  LOGIC UTAMA: BALIK URUTAN
+//  BACA BARIS
 // ═══════════════════════════════════════════════════════
 
 function readRows(tbodyId) {
@@ -406,39 +519,26 @@ function readRows(tbodyId) {
     }));
 }
 
+// ═══════════════════════════════════════════════════════
+//  LOGIKA BALIK URUTAN
+// ═══════════════════════════════════════════════════════
+
 function doReverse() {
     const all = readRows('inputBody');
+    const filled = all.filter(r => r.no.trim() || r.br.trim() || r.ct.trim());
+    if (filled.length === 0) { renderOutput([]); return; }
 
-    // Pisahkan baris isi dan baris kosong
-    const filled = all.filter(r => r.no.trim() !== '' || r.br.trim() !== '' || r.ct.trim() !== '');
-    if (filled.length === 0) {
-        renderOutput([]);
-        return;
-    }
+    const tonaseRows = [], keretaRows = [];
+    filled.forEach(r => (isTonase(r.no) ? tonaseRows : keretaRows).push(r));
 
-    // Pisahkan baris TONASE (bisa lebih dari satu, misalnya header tonase)
-    const tonaseRows = [];
-    const keretaRows = [];
-
-    filled.forEach(r => {
-        if (isTonase(r.no)) tonaseRows.push(r);
-        else keretaRows.push(r);
-    });
-
-    // Balik urutan kereta saja
     keretaRows.reverse();
-
-    // Tonase selalu di bawah
-    const result = [...keretaRows, ...tonaseRows];
-
-    renderOutput(result);
+    renderOutput([...keretaRows, ...tonaseRows]);
 }
 
 function renderOutput(data) {
     const tbody = document.getElementById('outputBody');
     tbody.innerHTML = '';
     if (data.length === 0) {
-        // Tampilkan baris kosong minimal
         for (let i = 0; i < 5; i++) tbody.appendChild(makeRow('outputBody'));
         return;
     }
@@ -446,52 +546,37 @@ function renderOutput(data) {
 }
 
 // ═══════════════════════════════════════════════════════
-//  PASTE DARI SPREADSHEET
+//  PASTE
 // ═══════════════════════════════════════════════════════
 
-let pasteReady = false;
-
 function showPasteHint() {
-    pasteReady = true;
     document.getElementById('pasteZone').classList.add('active');
 }
 
 document.getElementById('pasteZone').addEventListener('click', function(e) {
-    if (e.target === this) {
-        pasteReady = false;
-        this.classList.remove('active');
-    }
+    if (e.target === this) this.classList.remove('active');
 });
 
 document.addEventListener('paste', function(e) {
-    // Jika user sedang fokus di input, biarkan paste normal di sana
     if (e.target.tagName === 'INPUT') return;
-
     e.preventDefault();
     document.getElementById('pasteZone').classList.remove('active');
-    pasteReady = false;
 
     const raw = (e.clipboardData || window.clipboardData).getData('text');
     if (!raw.trim()) return;
 
+    pushHistory(); // Simpan state sebelum paste
+
     const lines = raw.trim().split(/\r?\n/);
     const tbody = document.getElementById('inputBody');
     tbody.innerHTML = '';
-
     lines.forEach(line => {
-        const cols = line.split('\t');
-        addRowTo('inputBody', {
-            no: cols[0] || '',
-            st: cols[1] || '',
-            br: cols[2] || '',
-            ct: cols[3] || '',
-        });
+        const c = line.split('\t');
+        tbody.appendChild(makeRow('inputBody', { no:c[0]||'', st:c[1]||'', br:c[2]||'', ct:c[3]||'' }));
     });
-
-    // Tambah baris kosong sisa
+    // Tambah baris kosong minimal
     const cur = tbody.querySelectorAll('tr').length;
-    for (let i = cur; i < Math.max(cur, 5); i++) addRowTo('inputBody');
-
+    for (let i = cur; i < Math.max(cur, 3); i++) tbody.appendChild(makeRow('inputBody'));
     doReverse();
 });
 
@@ -500,36 +585,24 @@ document.addEventListener('paste', function(e) {
 // ═══════════════════════════════════════════════════════
 
 function copyOutput() {
-    const rows = readRows('outputBody');
-    const text = rows
+    const text = readRows('outputBody')
         .filter(r => r.no || r.br || r.ct)
         .map(r => [r.no, r.st, r.br, r.ct].join('\t'))
         .join('\n');
 
-    navigator.clipboard.writeText(text)
-        .then(() => flashBtn())
-        .catch(() => {
-            // Fallback untuk browser yang restrict clipboard
-            const ta = document.createElement('textarea');
-            ta.value = text;
-            document.body.appendChild(ta);
-            ta.select();
-            document.execCommand('copy');
-            ta.remove();
-            flashBtn();
+    const doFlash = () => {
+        document.querySelectorAll('#panelOutput .btn-green').forEach(b => {
+            const orig = b.textContent;
+            b.textContent = '✓ Tersalin!';
+            b.style.background = '#1a7a43';
+            setTimeout(() => { b.textContent = orig; b.style.background = ''; }, 1800);
         });
-}
+    };
 
-function flashBtn() {
-    const btns = document.querySelectorAll('#panelOutput .btn-green');
-    btns.forEach(b => {
-        const orig = b.textContent;
-        b.textContent = '✓ Tersalin!';
-        b.style.background = '#1a7a43';
-        setTimeout(() => {
-            b.textContent = orig;
-            b.style.background = '';
-        }, 1800);
+    navigator.clipboard.writeText(text).then(doFlash).catch(() => {
+        const ta = document.createElement('textarea');
+        ta.value = text; document.body.appendChild(ta); ta.select();
+        document.execCommand('copy'); ta.remove(); doFlash();
     });
 }
 
@@ -539,9 +612,10 @@ function flashBtn() {
 
 function resetInput() {
     if (!confirm('Reset data asli?')) return;
+    pushHistory();
     const tbody = document.getElementById('inputBody');
     tbody.innerHTML = '';
-    for (let i = 0; i < 10; i++) addRowTo('inputBody');
+    for (let i = 0; i < 10; i++) tbody.appendChild(makeRow('inputBody'));
     renderOutput([]);
 }
 
@@ -550,8 +624,11 @@ function resetInput() {
 // ═══════════════════════════════════════════════════════
 
 (function init() {
-    for (let i = 0; i < 10; i++) addRowTo('inputBody');
-    for (let i = 0; i < 5;  i++) addRowTo('outputBody');
+    const inTbody = document.getElementById('inputBody');
+    const outTbody = document.getElementById('outputBody');
+    for (let i = 0; i < 10; i++) inTbody.appendChild(makeRow('inputBody'));
+    for (let i = 0; i < 5;  i++) outTbody.appendChild(makeRow('outputBody'));
+    updateUndoUI();
 })();
 </script>
 </body>
