@@ -31,7 +31,6 @@
             padding: 14px 10px 40px;
         }
 
-        /* ── HEADER ── */
         header { text-align: center; margin-bottom: 14px; }
         header h1 {
             font-size: 20px; font-weight: 700;
@@ -52,24 +51,18 @@
         }
 
         /* ── LAYOUT ── */
-        .workspace {
-            display: flex; gap: 12px;
-            justify-content: center; flex-wrap: wrap;
-        }
+        .workspace { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
 
         .panel {
             background: var(--panel);
             border: 1px solid var(--border);
-            border-radius: 8px;
-            width: 530px;
-            overflow: hidden;
+            border-radius: 8px; width: 530px; overflow: hidden;
         }
 
         .panel-header {
             display: flex; align-items: center;
             justify-content: space-between;
-            padding: 9px 12px;
-            background: #1e2333;
+            padding: 9px 12px; background: #1e2333;
             border-bottom: 2px solid var(--border);
         }
         .panel-title {
@@ -83,18 +76,14 @@
         #panelInput  .panel-title span { background: var(--blue); }
         #panelOutput .panel-title span { background: var(--green); }
 
-        .panel-hint {
-            font-size: 10px; color: var(--muted);
-            padding: 5px 12px 3px; letter-spacing: .4px;
-        }
+        .panel-hint { font-size: 10px; color: var(--muted); padding: 5px 12px 3px; letter-spacing: .4px; }
 
         /* ── BUTTONS ── */
         .btn {
             display: inline-flex; align-items: center; gap: 4px;
             padding: 5px 11px;
             font-family: var(--ui); font-size: 12px;
-            font-weight: 700; letter-spacing: .8px;
-            text-transform: uppercase;
+            font-weight: 700; letter-spacing: .8px; text-transform: uppercase;
             border: none; border-radius: 4px;
             cursor: pointer; transition: opacity .15s, transform .1s;
         }
@@ -107,34 +96,28 @@
         .btn-blue   { background: var(--blue);   color: #fff; }
         .btn-muted  { background: #353c52;       color: var(--text); }
 
-        /* +/- per baris */
+        /* ── TOMBOL PER BARIS: ↑ ↓ − ── */
         .btn-row {
             width: 24px; height: 24px;
-            padding: 0; font-size: 16px; font-weight: 700;
+            padding: 0; font-size: 15px; font-weight: 700;
             line-height: 1; border: none; border-radius: 3px;
             cursor: pointer; transition: opacity .12s;
         }
         .btn-row:hover { opacity: .8; }
-        .btn-ins-above { background: #1a6eae; color: #fff; }  /* biru — sisip di atas */
-        .btn-ins-below { background: var(--green); color: #fff; }  /* hijau — sisip di bawah */
-        .btn-del       { background: var(--red);   color: #fff; }
+        .btn-ins-above { background: #1a6eae; color: #fff; }   /* biru tua — sisip atas */
+        .btn-ins-below { background: var(--blue); color: #fff; } /* biru — sisip bawah  */
+        .btn-del       { background: var(--red);  color: #fff; }
 
         /* ── TABLE ── */
         .tbl-wrap { overflow-x: auto; padding: 0 0 4px; }
 
-        table {
-            width: 100%; border-collapse: collapse;
-            font-family: var(--mono); font-size: 14px; /* ← LEBIH BESAR */
-        }
+        table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 14px; }
 
         thead th {
             background: #1a1f2e; color: var(--muted);
             font-family: var(--ui); font-size: 10px;
-            font-weight: 600; letter-spacing: 1px;
-            text-transform: uppercase;
-            padding: 6px 4px;
-            border-bottom: 1px solid var(--border);
-            white-space: nowrap;
+            font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
+            padding: 6px 4px; border-bottom: 1px solid var(--border); white-space: nowrap;
         }
 
         tbody tr { border-bottom: 1px solid #2a3045; }
@@ -143,30 +126,28 @@
 
         .col-act { width: 56px; text-align: center; }
         .col-no  { width: 33%; }
-        .col-st  { width: 40px; }
+        .col-tm  { width: 40px; }
         .col-br  { width: 58px; }
 
         tbody input {
             width: 100%; background: transparent;
-            border: none; outline: none;
-            color: var(--text);
-            font-family: var(--mono);
-            font-size: 14px; /* ← LEBIH BESAR */
+            border: none; outline: none; color: var(--text);
+            font-family: var(--mono); font-size: 14px;
             padding: 5px 2px; text-align: center;
         }
         .col-ct input { text-align: left; padding-left: 4px; }
         tbody input:focus { background: #2e3549; border-radius: 3px; }
 
-        input.st-e { color:#fff; background:#27ae60!important; border-radius:3px; font-weight:bold; }
-        input.st-d { color:#fff; background:#e74c3c!important; border-radius:3px; font-weight:bold; }
+        /* TM kolom: A/B/C/D → merah */
+        input.tm-red { color:#fff; background: var(--red) !important; border-radius: 3px; font-weight: bold; }
 
+        /* Tonase row */
         tr.row-tonase { background: var(--tonase) !important; }
         tr.row-tonase input { color: var(--accent) !important; font-weight: bold; }
 
         /* ── FOOTER ── */
         .panel-footer {
-            display: flex; gap: 8px;
-            padding: 9px 12px;
+            display: flex; gap: 8px; padding: 9px 12px;
             border-top: 1px solid var(--border);
             background: #1e2333; flex-wrap: wrap;
         }
@@ -174,19 +155,28 @@
         /* ── PASTE OVERLAY ── */
         #pasteZone {
             position: fixed; inset: 0;
-            background: rgba(10,14,25,.82);
+            background: rgba(10,14,25,.85);
             display: flex; align-items: center; justify-content: center;
-            z-index: 999; opacity: 0; pointer-events: none;
-            transition: opacity .2s;
+            z-index: 999; opacity: 0; pointer-events: none; transition: opacity .2s;
         }
         #pasteZone.active { opacity: 1; pointer-events: all; }
         #pasteZone .box {
             background: var(--panel);
             border: 2px dashed var(--accent);
-            border-radius: 12px; padding: 36px 56px; text-align: center;
+            border-radius: 12px; padding: 32px 50px; text-align: center; width: 90%; max-width: 420px;
         }
-        #pasteZone .box h2 { font-size: 21px; color: var(--accent); margin-bottom: 8px; }
-        #pasteZone .box p  { color: var(--muted); font-size: 12px; }
+        #pasteZone .box h2 { font-size: 20px; color: var(--accent); margin-bottom: 10px; }
+        #pasteZone .box p  { color: var(--muted); font-size: 12px; line-height: 1.6; }
+
+        /* Textarea paste manual (untuk HP) */
+        #pasteZone textarea {
+            width: 100%; margin-top: 14px;
+            background: #1a1f2e; color: var(--text);
+            border: 1px solid var(--border); border-radius: 6px;
+            padding: 10px; font-family: var(--mono); font-size: 12px;
+            resize: vertical; min-height: 120px; outline: none;
+        }
+        #pasteZone .paste-actions { display: flex; gap: 8px; margin-top: 10px; justify-content: center; }
     </style>
 </head>
 <body>
@@ -196,7 +186,6 @@
     <p>catkaujungtimur · Ketapang</p>
 </header>
 
-<!-- UNDO / REDO BAR -->
 <div class="undobar">
     <button class="btn btn-muted" id="btnUndo" onclick="undo()" disabled>↩ Undo</button>
     <button class="btn btn-muted" id="btnRedo" onclick="redo()" disabled>↪ Redo</button>
@@ -204,22 +193,25 @@
 </div>
 
 <div class="workspace">
-    <!-- PANEL KIRI -->
+    <!-- PANEL KIRI: DATA ASLI -->
     <div class="panel" id="panelInput">
         <div class="panel-header">
             <div class="panel-title"><span></span>Data Asli</div>
             <div style="display:flex;gap:6px;">
-                <button class="btn btn-blue" onclick="showPasteHint()">📋 Paste Data</button>
+                <button class="btn btn-blue" onclick="showPasteOverlay()">📋 Paste Data</button>
                 <button class="btn btn-muted" onclick="resetInput()">↺ Reset</button>
             </div>
         </div>
-        <p class="panel-hint">Ctrl+V di mana saja untuk paste dari spreadsheet · ↑↓←→ untuk navigasi sel</p>
+        <p class="panel-hint">
+            Cara paste: (1) Klik tombol "Paste Data" → lalu Ctrl+V atau tempel dari HP &nbsp;|&nbsp;
+            (2) Klik langsung di sel kosong → Ctrl+V
+        </p>
         <div class="tbl-wrap">
             <table>
                 <thead><tr>
-                    <th class="col-act">+/−</th>
+                    <th class="col-act">↑↓−</th>
                     <th class="col-no">No. Sarana</th>
-                    <th class="col-st">ST</th>
+                    <th class="col-tm">TM</th>
                     <th class="col-br">Berat</th>
                     <th class="col-ct">Catatan / Order</th>
                 </tr></thead>
@@ -227,24 +219,23 @@
             </table>
         </div>
         <div class="panel-footer">
-            <button class="btn btn-green"  onclick="addRowTo('inputBody')">+ Baris Bawah</button>
             <button class="btn btn-accent" onclick="doReverse()">⇅ Proses Balik →</button>
         </div>
     </div>
 
-    <!-- PANEL KANAN -->
+    <!-- PANEL KANAN: HASIL BALIK -->
     <div class="panel" id="panelOutput">
         <div class="panel-header">
             <div class="panel-title"><span></span>Hasil Balik</div>
-            <button class="btn btn-green" onclick="copyOutput()">⎘ Copy Hasil</button>
+            <button class="btn btn-green" id="btnCopyTop" onclick="copyOutput()">⎘ Copy Hasil</button>
         </div>
         <p class="panel-hint">Edit bebas · ↑↓←→ untuk navigasi sel</p>
         <div class="tbl-wrap">
             <table>
                 <thead><tr>
-                    <th class="col-act">+/−</th>
+                    <th class="col-act">↑↓−</th>
                     <th class="col-no">No. Sarana</th>
-                    <th class="col-st">ST</th>
+                    <th class="col-tm">TM</th>
                     <th class="col-br">Berat</th>
                     <th class="col-ct">Catatan / Order</th>
                 </tr></thead>
@@ -252,30 +243,34 @@
             </table>
         </div>
         <div class="panel-footer">
-            <button class="btn btn-green" onclick="addRowTo('outputBody')">+ Baris Bawah</button>
-            <button class="btn btn-green" onclick="copyOutput()">⎘ Copy Hasil</button>
+            <button class="btn btn-green" id="btnCopyBot" onclick="copyOutput()">⎘ Copy Hasil</button>
         </div>
     </div>
 </div>
 
-<!-- Paste overlay -->
+<!-- PASTE OVERLAY — bekerja di desktop (Ctrl+V) & HP (textarea tempel manual) -->
 <div id="pasteZone">
     <div class="box">
-        <h2>📋 Paste Siap</h2>
-        <p>Tekan Ctrl+V sekarang untuk memasukkan data dari spreadsheet</p>
-        <p style="margin-top:10px;font-size:10px;">klik di luar untuk batal</p>
+        <h2>📋 Paste Data</h2>
+        <p>
+            <b>Desktop:</b> tekan Ctrl+V sekarang<br>
+            <b>HP / Mobile:</b> tempel teks di kotak di bawah lalu tekan Proses
+        </p>
+        <textarea id="pasteTextarea" placeholder="Tempel data di sini..."></textarea>
+        <div class="paste-actions">
+            <button class="btn btn-accent" onclick="processPasteTextarea()">✓ Proses</button>
+            <button class="btn btn-muted"  onclick="closePasteOverlay()">✕ Batal</button>
+        </div>
     </div>
 </div>
 
 <script>
 // ═══════════════════════════════════════════════════════
-//  UNDO / REDO STACK
-//  Snapshot = array of {no,st,br,ct} dari inputBody
+//  UNDO / REDO
 // ═══════════════════════════════════════════════════════
 
-const undoStack = [];
-const redoStack = [];
-let suspendHistory = false; // Kunci saat restore agar tidak push lagi
+const undoStack = [], redoStack = [];
+let suspendHistory = false;
 
 function snapshotInput() {
     return readRows('inputBody').map(r => ({ ...r }));
@@ -284,16 +279,16 @@ function snapshotInput() {
 function pushHistory() {
     if (suspendHistory) return;
     undoStack.push(snapshotInput());
-    redoStack.length = 0; // Clear redo saat ada aksi baru
+    redoStack.length = 0;
     updateUndoUI();
 }
 
 function updateUndoUI() {
     document.getElementById('btnUndo').disabled = undoStack.length === 0;
     document.getElementById('btnRedo').disabled = redoStack.length === 0;
-    const total = undoStack.length + redoStack.length;
+    const t = undoStack.length + redoStack.length;
     document.getElementById('histInfo').textContent =
-        total > 0 ? `riwayat: ${undoStack.length} undo / ${redoStack.length} redo` : '';
+        t > 0 ? `riwayat: ${undoStack.length} undo / ${redoStack.length} redo` : '';
 }
 
 function restoreSnapshot(snap) {
@@ -307,51 +302,36 @@ function restoreSnapshot(snap) {
     updateUndoUI();
 }
 
-function undo() {
-    if (undoStack.length === 0) return;
-    redoStack.push(snapshotInput());
-    restoreSnapshot(undoStack.pop());
-}
+function undo() { if (!undoStack.length) return; redoStack.push(snapshotInput()); restoreSnapshot(undoStack.pop()); }
+function redo() { if (!redoStack.length) return; undoStack.push(snapshotInput()); restoreSnapshot(redoStack.pop()); }
 
-function redo() {
-    if (redoStack.length === 0) return;
-    undoStack.push(snapshotInput());
-    restoreSnapshot(redoStack.pop());
-}
-
-// Keyboard shortcut: Ctrl+Z / Ctrl+Y
 document.addEventListener('keydown', function(e) {
     if (e.ctrlKey && e.key === 'z') { e.preventDefault(); undo(); }
     if (e.ctrlKey && e.key === 'y') { e.preventDefault(); redo(); }
 });
 
 // ═══════════════════════════════════════════════════════
-//  NAVIGASI KEYBOARD ANTAR SEL (↑↓←→)
-//  Kumpulkan semua input dalam tabel, navigasi by index
+//  NAVIGASI KEYBOARD ↑↓←→ ANTAR SEL
 // ═══════════════════════════════════════════════════════
 
 function getAllInputs(tbodyId) {
-    // Urutan: per baris, kolom no → st → br → ct
     return Array.from(document.getElementById(tbodyId)
-        .querySelectorAll('input.no, input.st, input.br, input.ct'));
+        .querySelectorAll('input.no, input.tm, input.br, input.ct'));
 }
 
 function onArrowKey(e, input, tbodyId) {
-    const COLS = 4; // no, st, br, ct
+    const COLS = 4;
     const all = getAllInputs(tbodyId);
     const idx = all.indexOf(input);
-    if (idx === -1) return;
+    if (idx < 0) return;
 
     let next = -1;
-    if (e.key === 'ArrowRight' || (e.key === 'Tab' && !e.shiftKey)) {
-        next = idx + 1;
-    } else if (e.key === 'ArrowLeft' || (e.key === 'Tab' && e.shiftKey)) {
-        next = idx - 1;
-    } else if (e.key === 'ArrowDown' || e.key === 'Enter') {
-        next = idx + COLS;
-    } else if (e.key === 'ArrowUp') {
-        next = idx - COLS;
-    }
+    if      (e.key === 'ArrowRight')                    next = idx + 1;
+    else if (e.key === 'ArrowLeft')                     next = idx - 1;
+    else if (e.key === 'ArrowDown' || e.key === 'Enter') next = idx + COLS;
+    else if (e.key === 'ArrowUp')                       next = idx - COLS;
+    else if (e.key === 'Tab' && !e.shiftKey)            next = idx + 1;
+    else if (e.key === 'Tab' && e.shiftKey)             next = idx - 1;
 
     if (next >= 0 && next < all.length) {
         e.preventDefault();
@@ -364,20 +344,17 @@ function onArrowKey(e, input, tbodyId) {
 //  UTILITAS
 // ═══════════════════════════════════════════════════════
 
-function colorST(input) {
+// [POIN 5] TM: A/B/C/D → merah; selain itu normal
+const TM_RED = new Set(['A','B','C','D']);
+function colorTM(input) {
     const v = input.value.trim().toUpperCase();
-    input.classList.remove('st-e','st-d');
-    if (v === 'E') input.classList.add('st-e');
-    else if (v === 'D') input.classList.add('st-d');
+    if (TM_RED.has(v)) input.classList.add('tm-red');
+    else input.classList.remove('tm-red');
 }
 
-function isTonase(str) {
-    return str.trim().toUpperCase().includes('TONASE');
-}
+function isTonase(str) { return str.trim().toUpperCase().includes('TONASE'); }
 
-function esc(str) {
-    return String(str || '').replace(/&/g,'&amp;').replace(/"/g,'&quot;');
-}
+function esc(str) { return String(str || '').replace(/&/g,'&amp;').replace(/"/g,'&quot;'); }
 
 function refreshTonaseClass(tr) {
     const no = tr.querySelector('.no').value;
@@ -386,85 +363,109 @@ function refreshTonaseClass(tr) {
 }
 
 // ═══════════════════════════════════════════════════════
+//  [POIN 6] HITUNG ULANG TONASE OTOMATIS
+//  Cari baris TONASE di inputBody → update nilai br-nya
+// ═══════════════════════════════════════════════════════
+
+function recalcTonase() {
+    const tbody = document.getElementById('inputBody');
+    const rows  = Array.from(tbody.querySelectorAll('tr'));
+
+    let total = 0;
+    let tonaseRow = null;
+
+    rows.forEach(tr => {
+        const noVal = tr.querySelector('.no').value;
+        const brVal = tr.querySelector('.br').value;
+        if (isTonase(noVal)) {
+            tonaseRow = tr;
+        } else {
+            const n = parseFloat(brVal);
+            if (!isNaN(n)) total += n;
+        }
+    });
+
+    if (tonaseRow) {
+        tonaseRow.querySelector('.br').value = total > 0 ? total : '';
+    }
+}
+
+// ═══════════════════════════════════════════════════════
 //  BUAT BARIS
 // ═══════════════════════════════════════════════════════
 
 function makeRow(targetId, d = {}) {
-    const { no='', st='', br='', ct='' } = d;
+    const { no='', st='', tm='', br='', ct='' } = d;
+    // Kompatibilitas: field lama 'st' diperlakukan sebagai 'tm'
+    const tmVal = tm || st;
+
     const tr = document.createElement('tr');
 
-    // Sel aksi: 3 tombol — sisip atas, sisip bawah, hapus
+    // ── TOMBOL AKSI: ↑ ↓ − ──
     const tdAct = document.createElement('td');
     tdAct.className = 'col-act';
-    tdAct.style.cssText = 'white-space:nowrap;';
+    tdAct.style.whiteSpace = 'nowrap';
 
-    const btnAbove = document.createElement('button');
-    btnAbove.className = 'btn-row btn-ins-above';
-    btnAbove.title = 'Sisip baris di ATAS';
-    btnAbove.textContent = '↑';
-    btnAbove.onclick = () => insertAbove(tr, targetId);
+    const mkBtn = (cls, title, label, fn) => {
+        const b = document.createElement('button');
+        b.className = `btn-row ${cls}`; b.title = title; b.textContent = label;
+        b.onclick = fn; return b;
+    };
 
-    const btnBelow = document.createElement('button');
-    btnBelow.className = 'btn-row btn-ins-below';
-    btnBelow.title = 'Sisip baris di BAWAH';
-    btnBelow.textContent = '+';
-    btnBelow.onclick = () => insertBelow(tr, targetId);
-
-    const btnDel = document.createElement('button');
-    btnDel.className = 'btn-row btn-del';
-    btnDel.title = 'Hapus baris ini';
-    btnDel.textContent = '−';
-    btnDel.onclick = () => deleteRow(tr, targetId);
-
-    tdAct.append(btnAbove, btnBelow, btnDel);
+    tdAct.append(
+        mkBtn('btn-ins-above', 'Sisip baris di ATAS',   '↑', () => insertAbove(tr, targetId)),
+        mkBtn('btn-ins-below', 'Sisip baris di BAWAH',  '↓', () => insertBelow(tr, targetId)),
+        mkBtn('btn-del',       'Hapus baris ini',        '−', () => deleteRow(tr, targetId))
+    );
     tr.appendChild(tdAct);
 
-    // Helper buat td+input
-    function makeCell(cls, val, extra = {}) {
+    // ── SEL INPUT ──
+    function makeCell(cls, val, opts = {}) {
         const td = document.createElement('td');
         td.className = cls;
         const inp = document.createElement('input');
         inp.type = 'text';
         inp.className = cls.replace('col-','');
         inp.value = val;
-        if (extra.maxlength) inp.maxLength = extra.maxlength;
+        if (opts.maxlength) inp.maxLength = opts.maxlength;
 
-        // Navigasi keyboard
-        inp.addEventListener('keydown', function(e) {
-            if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Enter'].includes(e.key)) {
+        inp.addEventListener('keydown', e => {
+            if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Enter','Tab'].includes(e.key))
                 onArrowKey(e, inp, targetId);
-            }
-            // Tab override agar lewat onArrowKey juga
-            if (e.key === 'Tab') {
-                onArrowKey(e, inp, targetId);
-            }
         });
 
-        // Oninput actions
-        inp.addEventListener('input', function() {
-            if (cls === 'col-st') colorST(inp);
+        inp.addEventListener('input', () => {
+            if (cls === 'col-tm') colorTM(inp);
             if (cls === 'col-no') refreshTonaseClass(tr);
             if (targetId === 'inputBody') {
+                // Recalc tonase setiap edit berat atau nama sarana
+                if (cls === 'col-br' || cls === 'col-no') recalcTonase();
                 pushHistory();
                 doReverse();
             }
         });
+
+        // [POIN 1b] Paste langsung di sel kosong inputBody
+        // Tangkap paste multi-baris di dalam sel No. Sarana
+        if (targetId === 'inputBody' && cls === 'col-no') {
+            inp.addEventListener('paste', e => {
+                const raw = (e.clipboardData || window.clipboardData).getData('text');
+                if (!raw.includes('\n') && !raw.includes('\t')) return; // paste biasa 1 sel
+                e.preventDefault();
+                processPasteRaw(raw, tr);
+            });
+        }
 
         td.appendChild(inp);
         return td;
     }
 
     tr.appendChild(makeCell('col-no', no));
-    tr.appendChild(makeCell('col-st', st, { maxlength: 1 }));
+    tr.appendChild(makeCell('col-tm', tmVal, { maxlength: 1 }));
     tr.appendChild(makeCell('col-br', br));
     tr.appendChild(makeCell('col-ct', ct));
 
-    // Warnai setelah build
-    setTimeout(() => {
-        colorST(tr.querySelector('.st'));
-        refreshTonaseClass(tr);
-    }, 0);
-
+    setTimeout(() => { colorTM(tr.querySelector('.tm')); refreshTonaseClass(tr); }, 0);
     return tr;
 }
 
@@ -473,37 +474,33 @@ function makeRow(targetId, d = {}) {
 // ═══════════════════════════════════════════════════════
 
 function addRowTo(targetId, d) {
-    const tbody = document.getElementById(targetId);
-    const newRow = makeRow(targetId, d);
-    tbody.appendChild(newRow);
-    if (targetId === 'inputBody') { pushHistory(); doReverse(); }
+    document.getElementById(targetId).appendChild(makeRow(targetId, d));
+    if (targetId === 'inputBody') { recalcTonase(); pushHistory(); doReverse(); }
 }
 
-// Sisip di ATAS baris ini
 function insertAbove(tr, targetId) {
-    const newRow = makeRow(targetId);
-    tr.parentNode.insertBefore(newRow, tr);
-    newRow.querySelector('.no').focus();
-    if (targetId === 'inputBody') { pushHistory(); doReverse(); }
+    const nr = makeRow(targetId);
+    tr.parentNode.insertBefore(nr, tr);
+    nr.querySelector('.no').focus();
+    if (targetId === 'inputBody') { recalcTonase(); pushHistory(); doReverse(); }
 }
 
-// Sisip di BAWAH baris ini
 function insertBelow(tr, targetId) {
-    const newRow = makeRow(targetId);
-    tr.after(newRow);
-    newRow.querySelector('.no').focus();
-    if (targetId === 'inputBody') { pushHistory(); doReverse(); }
+    const nr = makeRow(targetId);
+    tr.after(nr);
+    nr.querySelector('.no').focus();
+    if (targetId === 'inputBody') { recalcTonase(); pushHistory(); doReverse(); }
 }
 
 function deleteRow(tr, targetId) {
     const tbody = tr.closest('tbody');
     if (tbody.querySelectorAll('tr').length <= 1) {
         tr.querySelectorAll('input').forEach(i => i.value = '');
-        if (targetId === 'inputBody') { pushHistory(); doReverse(); }
+        if (targetId === 'inputBody') { recalcTonase(); pushHistory(); doReverse(); }
         return;
     }
     tr.remove();
-    if (targetId === 'inputBody') { pushHistory(); doReverse(); }
+    if (targetId === 'inputBody') { recalcTonase(); pushHistory(); doReverse(); }
 }
 
 // ═══════════════════════════════════════════════════════
@@ -513,7 +510,7 @@ function deleteRow(tr, targetId) {
 function readRows(tbodyId) {
     return Array.from(document.getElementById(tbodyId).querySelectorAll('tr')).map(tr => ({
         no: tr.querySelector('.no').value,
-        st: tr.querySelector('.st').value,
+        tm: tr.querySelector('.tm').value,
         br: tr.querySelector('.br').value,
         ct: tr.querySelector('.ct').value,
     }));
@@ -526,7 +523,7 @@ function readRows(tbodyId) {
 function doReverse() {
     const all = readRows('inputBody');
     const filled = all.filter(r => r.no.trim() || r.br.trim() || r.ct.trim());
-    if (filled.length === 0) { renderOutput([]); return; }
+    if (!filled.length) { renderOutput([]); return; }
 
     const tonaseRows = [], keretaRows = [];
     filled.forEach(r => (isTonase(r.no) ? tonaseRows : keretaRows).push(r));
@@ -538,7 +535,7 @@ function doReverse() {
 function renderOutput(data) {
     const tbody = document.getElementById('outputBody');
     tbody.innerHTML = '';
-    if (data.length === 0) {
+    if (!data.length) {
         for (let i = 0; i < 5; i++) tbody.appendChild(makeRow('outputBody'));
         return;
     }
@@ -546,39 +543,92 @@ function renderOutput(data) {
 }
 
 // ═══════════════════════════════════════════════════════
-//  PASTE
+//  PASTE — 2 CARA
 // ═══════════════════════════════════════════════════════
 
-function showPasteHint() {
+function showPasteOverlay() {
+    document.getElementById('pasteTextarea').value = '';
     document.getElementById('pasteZone').classList.add('active');
+    // Fokus ke textarea agar HP bisa langsung tempel
+    setTimeout(() => document.getElementById('pasteTextarea').focus(), 150);
+}
+
+function closePasteOverlay() {
+    document.getElementById('pasteZone').classList.remove('active');
 }
 
 document.getElementById('pasteZone').addEventListener('click', function(e) {
-    if (e.target === this) this.classList.remove('active');
+    if (e.target === this) closePasteOverlay();
 });
 
+// Tombol Proses di overlay (untuk HP)
+function processPasteTextarea() {
+    const raw = document.getElementById('pasteTextarea').value;
+    if (raw.trim()) processPasteRaw(raw, null);
+    closePasteOverlay();
+}
+
+// Ctrl+V di overlay (desktop)
+document.getElementById('pasteZone').addEventListener('paste', function(e) {
+    // Biarkan paste masuk ke textarea secara alami
+    // Setelah paste, proses otomatis
+    const ta = document.getElementById('pasteTextarea');
+    setTimeout(() => {
+        if (ta.value.trim()) processPasteRaw(ta.value, null);
+        closePasteOverlay();
+    }, 100);
+});
+
+// Ctrl+V di luar overlay (di body, bukan di input biasa)
 document.addEventListener('paste', function(e) {
     if (e.target.tagName === 'INPUT') return;
+    if (e.target.id === 'pasteTextarea') return; // sudah ditangani overlay
     e.preventDefault();
-    document.getElementById('pasteZone').classList.remove('active');
-
     const raw = (e.clipboardData || window.clipboardData).getData('text');
-    if (!raw.trim()) return;
+    if (raw.trim()) processPasteRaw(raw, null);
+    closePasteOverlay();
+});
 
-    pushHistory(); // Simpan state sebelum paste
-
+// Core: parse teks TSV/CSV → isi inputBody mulai dari baris referenceRow (atau replace all)
+function processPasteRaw(raw, referenceRow) {
+    pushHistory();
     const lines = raw.trim().split(/\r?\n/);
     const tbody = document.getElementById('inputBody');
-    tbody.innerHTML = '';
-    lines.forEach(line => {
-        const c = line.split('\t');
-        tbody.appendChild(makeRow('inputBody', { no:c[0]||'', st:c[1]||'', br:c[2]||'', ct:c[3]||'' }));
-    });
-    // Tambah baris kosong minimal
-    const cur = tbody.querySelectorAll('tr').length;
-    for (let i = cur; i < Math.max(cur, 3); i++) tbody.appendChild(makeRow('inputBody'));
+
+    if (!referenceRow) {
+        // Replace semua
+        tbody.innerHTML = '';
+        lines.forEach(line => {
+            const c = line.split('\t');
+            tbody.appendChild(makeRow('inputBody', { no:c[0]||'', tm:c[1]||'', br:c[2]||'', ct:c[3]||'' }));
+        });
+        // Minimal 3 baris kosong di bawah
+        for (let i = 0; i < 3; i++) tbody.appendChild(makeRow('inputBody'));
+    } else {
+        // Paste mulai dari baris referenceRow ke bawah
+        let cur = referenceRow;
+        lines.forEach((line, i) => {
+            const c = line.split('\t');
+            const d = { no:c[0]||'', tm:c[1]||'', br:c[2]||'', ct:c[3]||'' };
+            if (i === 0) {
+                // Isi baris saat ini
+                cur.querySelector('.no').value = d.no;
+                cur.querySelector('.tm').value = d.tm;
+                cur.querySelector('.br').value = d.br;
+                cur.querySelector('.ct').value = d.ct;
+                colorTM(cur.querySelector('.tm'));
+                refreshTonaseClass(cur);
+            } else {
+                // Sisip baris baru di bawah cur
+                const nr = makeRow('inputBody', d);
+                cur.after(nr);
+                cur = nr;
+            }
+        });
+    }
+    recalcTonase();
     doReverse();
-});
+}
 
 // ═══════════════════════════════════════════════════════
 //  COPY OUTPUT
@@ -587,11 +637,13 @@ document.addEventListener('paste', function(e) {
 function copyOutput() {
     const text = readRows('outputBody')
         .filter(r => r.no || r.br || r.ct)
-        .map(r => [r.no, r.st, r.br, r.ct].join('\t'))
+        .map(r => [r.no, r.tm, r.br, r.ct].join('\t'))
         .join('\n');
 
-    const doFlash = () => {
-        document.querySelectorAll('#panelOutput .btn-green').forEach(b => {
+    const flash = () => {
+        ['btnCopyTop','btnCopyBot'].forEach(id => {
+            const b = document.getElementById(id);
+            if (!b) return;
             const orig = b.textContent;
             b.textContent = '✓ Tersalin!';
             b.style.background = '#1a7a43';
@@ -599,10 +651,10 @@ function copyOutput() {
         });
     };
 
-    navigator.clipboard.writeText(text).then(doFlash).catch(() => {
+    navigator.clipboard.writeText(text).then(flash).catch(() => {
         const ta = document.createElement('textarea');
         ta.value = text; document.body.appendChild(ta); ta.select();
-        document.execCommand('copy'); ta.remove(); doFlash();
+        document.execCommand('copy'); ta.remove(); flash();
     });
 }
 
@@ -624,10 +676,10 @@ function resetInput() {
 // ═══════════════════════════════════════════════════════
 
 (function init() {
-    const inTbody = document.getElementById('inputBody');
-    const outTbody = document.getElementById('outputBody');
-    for (let i = 0; i < 10; i++) inTbody.appendChild(makeRow('inputBody'));
-    for (let i = 0; i < 5;  i++) outTbody.appendChild(makeRow('outputBody'));
+    const inT  = document.getElementById('inputBody');
+    const outT = document.getElementById('outputBody');
+    for (let i = 0; i < 10; i++) inT.appendChild(makeRow('inputBody'));
+    for (let i = 0; i < 5;  i++) outT.appendChild(makeRow('outputBody'));
     updateUndoUI();
 })();
 </script>
