@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -277,15 +276,18 @@
 //  UNDO / REDO
 // ═══════════════════════════════════════════════════════
 
+// ── Stack INPUT ──
 const undoStack = [], redoStack = [];
+// ── Stack OUTPUT (independen) ──
+const undoStackOut = [], redoStackOut = [];
+
 let suspendHistory = false;
 let _histDebounceTimer = null;
 
-function snapshotInput() {
-    return readRows('inputBody').map(r => ({ ...r }));
-}
+function snapshotInput()  { return readRows('inputBody').map(r => ({ ...r })); }
+function snapshotOutput() { return readRows('outputBody').map(r => ({ ...r })); }
 
-// pushHistory LANGSUNG — untuk aksi struktural (sisip/hapus baris, paste, reset)
+// pushHistory LANGSUNG — aksi struktural inputBody (sisip/hapus/paste/reset)
 function pushHistory() {
     if (suspendHistory) return;
     if (_histDebounceTimer) { clearTimeout(_histDebounceTimer); _histDebounceTimer = null; }
@@ -294,8 +296,7 @@ function pushHistory() {
     updateUndoUI();
 }
 
-// pushHistoryDebounced — untuk ketikan karakter per karakter
-// Menunggu 700ms jeda ketik sebelum menyimpan snapshot
+// pushHistoryDebounced — ketikan di inputBody, tunggu 700ms jeda
 function pushHistoryDebounced() {
     if (suspendHistory) return;
     if (_histDebounceTimer) clearTimeout(_histDebounceTimer);
@@ -307,27 +308,68 @@ function pushHistoryDebounced() {
     }, 700);
 }
 
-function updateUndoUI() {
-    document.getElementById('btnUndo').disabled = undoStack.length === 0;
-    document.getElementById('btnRedo').disabled = redoStack.length === 0;
-    const t = undoStack.length + redoStack.length;
-    document.getElementById('histInfo').textContent =
-        t > 0 ? `riwayat: ${undoStack.length} undo / ${redoStack.length} redo` : '';
+// pushHistoryOut — aksi struktural outputBody (sisip/hapus baris di hasil)
+function pushHistoryOut() {
+    if (suspendHistory) return;
+    undoStackOut.push(snapshotOutput());
+    redoStackOut.length = 0;
+    updateUndoUI();
 }
 
-function restoreSnapshot(snap) {
+function updateUndoUI() {
+    const canUndo = undoStack.length > 0 || undoStackOut.length > 0;
+    const canRedo = redoStack.length > 0 || redoStackOut.length > 0;
+    document.getElementById('btnUndo').disabled = !canUndo;
+    document.getElementById('btnRedo').disabled = !canRedo;
+    const u = undoStack.length + undoStackOut.length;
+    const r = redoStack.length + redoStackOut.length;
+    document.getElementById('histInfo').textContent =
+        (u + r) > 0 ? `riwayat: ${u} undo / ${r} redo` : '';
+}
+
+function restoreSnapshotInput(snap) {
     suspendHistory = true;
     const tbody = document.getElementById('inputBody');
     tbody.innerHTML = '';
     snap.forEach(d => tbody.appendChild(makeRow('inputBody', d)));
-    if (snap.length === 0) for (let i = 0; i < 5; i++) tbody.appendChild(makeRow('inputBody'));
+    if (!snap.length) for (let i = 0; i < 5; i++) tbody.appendChild(makeRow('inputBody'));
     doReverse();
     suspendHistory = false;
     updateUndoUI();
 }
 
-function undo() { if (!undoStack.length) return; redoStack.push(snapshotInput()); restoreSnapshot(undoStack.pop()); }
-function redo() { if (!redoStack.length) return; undoStack.push(snapshotInput()); restoreSnapshot(redoStack.pop()); }
+function restoreSnapshotOutput(snap) {
+    suspendHistory = true;
+    const tbody = document.getElementById('outputBody');
+    tbody.innerHTML = '';
+    snap.forEach(d => tbody.appendChild(makeRow('outputBody', d)));
+    if (!snap.length) for (let i = 0; i < 5; i++) tbody.appendChild(makeRow('outputBody'));
+    recalcTonaseOutput();
+    suspendHistory = false;
+    updateUndoUI();
+}
+
+function undo() {
+    // Prioritas: outputBody dulu (aksi terakhir yang user rasakan)
+    if (undoStackOut.length > 0) {
+        redoStackOut.push(snapshotOutput());
+        restoreSnapshotOutput(undoStackOut.pop());
+    } else if (undoStack.length > 0) {
+        redoStack.push(snapshotInput());
+        restoreSnapshotInput(undoStack.pop());
+    }
+}
+
+function redo() {
+    // Redo output dulu jika ada
+    if (redoStackOut.length > 0) {
+        undoStackOut.push(snapshotOutput());
+        restoreSnapshotOutput(redoStackOut.pop());
+    } else if (redoStack.length > 0) {
+        undoStack.push(snapshotInput());
+        restoreSnapshotInput(redoStack.pop());
+    }
+}
 
 document.addEventListener('keydown', function(e) {
     if (e.ctrlKey && e.key === 'z') { e.preventDefault(); undo(); }
@@ -553,28 +595,30 @@ function insertAbove(tr, targetId) {
     const nr = makeRow(targetId);
     tr.parentNode.insertBefore(nr, tr);
     nr.querySelector('.no').focus();
-    if (targetId === 'inputBody') { recalcTonase(); pushHistory(); doReverse(); }
-    if (targetId === 'outputBody') { recalcTonaseOutput(); }
+    if (targetId === 'inputBody')  { recalcTonase(); pushHistory(); doReverse(); }
+    if (targetId === 'outputBody') { pushHistoryOut(); recalcTonaseOutput(); }
 }
 
 function insertBelow(tr, targetId) {
     const nr = makeRow(targetId);
     tr.after(nr);
     nr.querySelector('.no').focus();
-    if (targetId === 'inputBody') { recalcTonase(); pushHistory(); doReverse(); }
-    if (targetId === 'outputBody') { recalcTonaseOutput(); }
+    if (targetId === 'inputBody')  { recalcTonase(); pushHistory(); doReverse(); }
+    if (targetId === 'outputBody') { pushHistoryOut(); recalcTonaseOutput(); }
 }
 
 function deleteRow(tr, targetId) {
     const tbody = tr.closest('tbody');
     if (tbody.querySelectorAll('tr').length <= 1) {
         tr.querySelectorAll('input, textarea').forEach(i => i.value = '');
-        if (targetId === 'inputBody') { recalcTonase(); pushHistory(); doReverse(); }
-        if (targetId === 'outputBody') { recalcTonaseOutput(); }
+        if (targetId === 'inputBody')  { recalcTonase(); pushHistory(); doReverse(); }
+        if (targetId === 'outputBody') { pushHistoryOut(); recalcTonaseOutput(); }
         return;
     }
+    // Simpan snapshot SEBELUM hapus
+    if (targetId === 'outputBody') pushHistoryOut();
     tr.remove();
-    if (targetId === 'inputBody') { recalcTonase(); pushHistory(); doReverse(); }
+    if (targetId === 'inputBody')  { recalcTonase(); pushHistory(); doReverse(); }
     if (targetId === 'outputBody') { recalcTonaseOutput(); }
 }
 
@@ -608,6 +652,10 @@ function doReverse() {
 }
 
 function renderOutput(data) {
+    // Jika user sudah pernah edit outputBody secara manual (ada di undoStackOut),
+    // jangan overwrite — biarkan output apa adanya
+    if (undoStackOut.length > 0) return;
+
     const tbody = document.getElementById('outputBody');
     tbody.innerHTML = '';
     if (!data.length) {
@@ -667,6 +715,8 @@ document.addEventListener('paste', function(e) {
 // Core paste: parse TSV → isi inputBody mulai referenceRow dan startCol
 function processPasteRaw(raw, referenceRow, startCol = 0) {
     pushHistory();
+    // Paste baru = reset manual-edit output agar renderOutput berjalan lagi
+    undoStackOut.length = 0; redoStackOut.length = 0;
     const lines = raw.trim().split(/\r?\n/);
     const tbody = document.getElementById('inputBody');
     const colKeys = ['no','tm','br','ct'];
@@ -765,6 +815,8 @@ function copyOutput() {
 function resetInput() {
     if (!confirm('Reset data asli?')) return;
     pushHistory();
+    // Clear output history juga agar renderOutput berjalan normal setelah reset
+    undoStackOut.length = 0; redoStackOut.length = 0;
     const tbody = document.getElementById('inputBody');
     tbody.innerHTML = '';
     for (let i = 0; i < 10; i++) tbody.appendChild(makeRow('inputBody'));
@@ -785,3 +837,4 @@ function resetInput() {
 </script>
 </body>
 </html>
+
