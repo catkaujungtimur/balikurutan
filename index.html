@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -111,7 +112,7 @@
         /* ── TABLE ── */
         .tbl-wrap { overflow-x: auto; padding: 0 0 4px; }
 
-        table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 14px; }
+        table { width: 100%; border-collapse: collapse; font-family: 'Arial Narrow', Arial, sans-serif; font-size: 12px; font-weight: bold; }
 
         thead th {
             background: #1a1f2e; color: var(--muted);
@@ -132,10 +133,16 @@
         tbody input, tbody textarea {
             width: 100%; background: transparent;
             border: none; outline: none; color: var(--text);
-            font-family: var(--mono); font-size: 14px;
+            font-family: 'Arial Narrow', Arial, sans-serif;
+            font-size: 12px; font-weight: bold;
             padding: 5px 2px; text-align: center;
         }
-        .col-ct input, .col-ct textarea { text-align: left; padding-left: 4px; }
+        /* Alignment per kolom */
+        .col-no input,  .col-no textarea  { text-align: left;   padding-left: 4px; }
+        .col-tm input,  .col-tm textarea  { text-align: center; }
+        .col-br input,  .col-br textarea  { text-align: center; }
+        .col-ct input,  .col-ct textarea  { text-align: left;   padding-left: 4px; }
+
         tbody input:focus, tbody textarea:focus { background: #2e3549; border-radius: 3px; }
 
         /* Textarea auto-resize untuk kolom Catatan */
@@ -552,20 +559,16 @@ function makeRow(targetId, d = {}) {
                 const isMultiLine = raw.includes('\n');
 
                 if (isMultiCol || isMultiLine) {
-                    // Format TSV lengkap (dari PC) — proses langsung
+                    // Format TSV multi-kolom/baris (dari spreadsheet PC) — proses langsung
                     e.preventDefault();
                     const colOrder = ['no','tm','br','ct'];
                     const startCol = colOrder.indexOf(inp.className.split(' ')[0]);
                     processPasteRaw(raw, tr, startCol >= 0 ? startCol : 0);
-                } else {
-                    // Format HP: teks biasa tanpa tab (clipboard HP tidak simpan format TSV)
-                    // Tampilkan overlay dengan teks sudah terisi supaya user bisa proses
-                    e.preventDefault();
-                    const ta = document.getElementById('pasteTextarea');
-                    ta.value = raw;
-                    document.getElementById('pasteZone').classList.add('active');
-                    setTimeout(() => ta.focus(), 150);
                 }
+                // Teks biasa satu sel (satu kata/nilai, tanpa tab) →
+                // biarkan paste normal ke dalam sel, tidak perlu overlay.
+                // Ini mencakup: paste nomor sarana satu per satu, paste angka berat, dll.
+                // Tidak ada crash karena processPasteRaw tidak dipanggil sama sekali.
             });
         }
 
