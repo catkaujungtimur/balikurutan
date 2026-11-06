@@ -33,24 +33,25 @@
             padding: 14px 10px 40px;
         }
 
+        header { text-align: center; margin-bottom: 14px; position: relative; }
+
         /* ── TOMBOL HOME (pojok kiri atas) ── */
         .btn-home {
-            position: absolute; top: 12px; left: 10px;
+            position: absolute; top: 0; left: 0;
             display: inline-flex; align-items: center; gap: 5px;
             padding: 5px 11px;
             font-family: var(--ui); font-size: 12px;
             font-weight: 700; letter-spacing: .8px; text-transform: uppercase;
-            color: var(--text); background: var(--panel);
-            border: 1px solid var(--border); border-radius: 4px;
             text-decoration: none;
-            transition: opacity .15s, border-color .15s, color .15s, transform .1s;
-            z-index: 10;
+            background: var(--panel); color: var(--accent);
+            border: 1px solid var(--border); border-radius: 4px;
+            transition: opacity .15s, transform .1s, border-color .15s;
         }
-        .btn-home:hover  { border-color: var(--accent); color: var(--accent); }
+        .btn-home:hover  { opacity: .85; border-color: var(--accent); }
         .btn-home:active { transform: scale(.96); }
-        .btn-home svg { width: 13px; height: 13px; fill: currentColor; }
-
-        header { text-align: center; margin-bottom: 14px; }
+        @media (max-width: 560px) {
+            header h1 { font-size: 17px; padding-top: 30px; }
+        }
         header h1 {
             font-size: 20px; font-weight: 700;
             letter-spacing: 2px; color: var(--accent);
@@ -213,11 +214,8 @@
 </head>
 <body>
 
-<a class="btn-home" href="https://catkaujungtimur.github.io/home/" title="Kembali ke Home">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 12h3v8h5v-6h4v6h5v-8h3L12 3z"/></svg>Home
-</a>
-
 <header>
+    <a class="btn-home" href="https://catkaujungtimur.github.io/home/" title="Kembali ke Home">⌂ Home</a>
     <h1>⇅ Balik Urutan KA</h1>
     <p>catkaujungtimur · Ketapang</p>
 </header>
